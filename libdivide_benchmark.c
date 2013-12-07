@@ -915,9 +915,9 @@ const char *strTests[kNumTests] = {
     "v64",
     "v128",
     "v256",
-    "v64us"
-    "v128us"
-    "v256us"
+    "v64_us",
+    "v128_us",
+    "v256_us"
 };
 
 struct TestResult {
