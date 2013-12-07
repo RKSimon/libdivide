@@ -616,7 +616,7 @@ NOINLINE static uint64_t mine_4u64_vector(struct FunctionParams_t *params) {
     const uint64_t *data = (const uint64_t *)params->data;
     for (iter = 0; iter < ITERATIONS; iter+=4) {
         uint64x2x2_t numers = *((const uint64x2x2_t*)(data + iter));
-        uint64x2x2_t result = libdivide_u64_do_vector(numers.val[0], &denom);
+        uint64x2x2_t result = libdivide_4u64_do_vector(numers, &denom);
         sumX = vaddq_u64(sumX, result.val[0]);
         sumX = vaddq_u64(sumX, result.val[1]);
     }
