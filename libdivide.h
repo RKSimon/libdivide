@@ -285,7 +285,7 @@ static inline __m128i libdivide_get_00000000FFFFFFFF(void) {
 
 static inline __m128i libdivide_get_0000FFFF(void) {
     //returns the same as _mm_set1_epi32(0x0000FFFFULL) without touching memory
-    __m128i result; //we don't care what its contents are
+    __m128i result = _mm_setzero_si128();
     result = _mm_cmpeq_epi8(result, result); //all 1s
     result = _mm_srli_epi32(result, 16);
     return result;    
