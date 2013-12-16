@@ -42,6 +42,10 @@ typedef unsigned __int8 uint8_t;
 #include <emmintrin.h>
 #endif
 
+#if LIBDIVIDE_USE_NEON
+#include <arm_neon.h>
+#endif
+
 #ifndef __has_builtin
 #define __has_builtin(x) 0  // Compatibility with non-clang compilers.
 #endif
@@ -63,7 +67,6 @@ typedef unsigned __int8 uint8_t;
 #if __GNUC__ || __clang__
 #define LIBDIVIDE_GCC_STYLE_ASM 1
 #endif
-
 
 /* libdivide may use the pmuldq (vector signed 32x32->64 mult instruction) which is in SSE 4.1.  However, signed multiplication can be emulated efficiently with unsigned multiplication, and SSE 4.1 is currently rare, so it is OK to not turn this on */
 #ifdef LIBDIVIDE_USE_SSE4_1
@@ -203,7 +206,32 @@ LIBDIVIDE_API __m128i libdivide_s64_do_vector_alg3(__m128i numers, const struct 
 LIBDIVIDE_API __m128i libdivide_s64_do_vector_alg4(__m128i numers, const struct libdivide_s64_t * denom);
 #endif
  
- 
+#if LIBDIVIDE_USE_NEON
+LIBDIVIDE_API uint32x4_t libdivide_u32_do_vector(uint32x4_t numers, const struct libdivide_u32_t * denom);
+LIBDIVIDE_API  int32x4_t libdivide_s32_do_vector( int32x4_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API uint64x2_t libdivide_u64_do_vector(uint64x2_t numers, const struct libdivide_u64_t * denom);
+LIBDIVIDE_API  int64x2_t libdivide_s64_do_vector( int64x2_t numers, const struct libdivide_s64_t * denom);
+
+LIBDIVIDE_API uint32x4_t libdivide_u32_do_vector_alg0(uint32x4_t numers, const struct libdivide_u32_t * denom);
+LIBDIVIDE_API uint32x4_t libdivide_u32_do_vector_alg1(uint32x4_t numers, const struct libdivide_u32_t * denom);
+LIBDIVIDE_API uint32x4_t libdivide_u32_do_vector_alg2(uint32x4_t numers, const struct libdivide_u32_t * denom);
+
+LIBDIVIDE_API int32x4_t libdivide_s32_do_vector_alg0(int32x4_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API int32x4_t libdivide_s32_do_vector_alg1(int32x4_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API int32x4_t libdivide_s32_do_vector_alg2(int32x4_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API int32x4_t libdivide_s32_do_vector_alg3(int32x4_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API int32x4_t libdivide_s32_do_vector_alg4(int32x4_t numers, const struct libdivide_s32_t * denom);
+
+LIBDIVIDE_API uint64x2_t libdivide_u64_do_vector_alg0(uint64x2_t numers, const struct libdivide_u64_t * denom);
+LIBDIVIDE_API uint64x2_t libdivide_u64_do_vector_alg1(uint64x2_t numers, const struct libdivide_u64_t * denom);
+LIBDIVIDE_API uint64x2_t libdivide_u64_do_vector_alg2(uint64x2_t numers, const struct libdivide_u64_t * denom);
+
+LIBDIVIDE_API int64x2_t libdivide_s64_do_vector_alg0(int64x2_t numers, const struct libdivide_s64_t * denom);
+LIBDIVIDE_API int64x2_t libdivide_s64_do_vector_alg1(int64x2_t numers, const struct libdivide_s64_t * denom);
+LIBDIVIDE_API int64x2_t libdivide_s64_do_vector_alg2(int64x2_t numers, const struct libdivide_s64_t * denom);
+LIBDIVIDE_API int64x2_t libdivide_s64_do_vector_alg3(int64x2_t numers, const struct libdivide_s64_t * denom);
+LIBDIVIDE_API int64x2_t libdivide_s64_do_vector_alg4(int64x2_t numers, const struct libdivide_s64_t * denom);
+#endif
  
 //////// Internal Utility Functions
  
@@ -605,9 +633,6 @@ uint32_t libdivide_u32_do_alg2(uint32_t numer, const struct libdivide_u32_t *den
     uint32_t t = ((numer - q) >> 1) + q;
     return t >> (denom->more & LIBDIVIDE_32_SHIFT_MASK);
 }
-
-
-
     
 #if LIBDIVIDE_USE_SSE2    
 __m128i libdivide_u32_do_vector(__m128i numers, const struct libdivide_u32_t *denom) {
@@ -645,7 +670,6 @@ __m128i libdivide_u32_do_vector_alg2(__m128i numers, const struct libdivide_u32_
     __m128i t = _mm_add_epi32(_mm_srli_epi32(_mm_sub_epi32(numers, q), 1), q);
     return _mm_srl_epi32(t, libdivide_u32_to_m128i(denom->more & LIBDIVIDE_32_SHIFT_MASK));
 }
-
 #endif
  
 /////////// UINT64
@@ -1111,7 +1135,6 @@ __m128i libdivide_s64_do_vector_alg4(__m128i numers, const struct libdivide_s64_
     q = _mm_add_epi64(q, _mm_srli_epi64(q, 63));
     return q;   
 }
-
 #endif
  
 /////////// C++ stuff
