@@ -39,7 +39,7 @@ endif
 
 # NEON
 ifeq ($(UNAME_P),armv7l)
-ARCH_FLAGS = 
+ARCH_FLAGS = -mfpu=neon -DLIBDIVIDE_USE_NEON=1
 endif
 
 DEBUG_FLAGS   = -fstrict-aliasing -W -Wall -g -O0 -DLIBDIVIDE_ASSERTIONS_ON=1 $(ARCH_FLAGS) $(LINKFLAGS)
