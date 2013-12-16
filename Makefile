@@ -11,7 +11,7 @@ else
 ARCH_386 =
 ARCH_x64 =
 CC = cc
-LINKFLAGS = -lpthread
+LINKFLAGS = -pthread
 endif
 
 CPP = c++
