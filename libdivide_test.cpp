@@ -2,9 +2,11 @@
 #include <limits.h>
 #include <limits>
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <time.h>
 #include <iostream>
+#include <typeinfo>
 
 #ifdef LIBDIVIDE_USE_SSE2
 #include <emmintrin.h>
