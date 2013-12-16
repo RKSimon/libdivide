@@ -1,23 +1,49 @@
-UNAME := $(shell uname)
+UNAME   := $(shell uname)
+UNAME_P := $(shell uname -p)
 
-ifeq ($(UNAME),Darwin)
-# Mac OS X
-ARCH_386 = -arch i386
-ARCH_x64 = -arch x86_64
-CC = clang
-LINKFLAGS = 
-else
-# Just build natively on Linux et. al.
+# Defaults
+CC = cc
+CPP = c++
+
 ARCH_386 =
 ARCH_x64 =
-CC = cc
+ARCH_FLAGS =
+LINKFLAGS = 
+
+# Mac OS X
+ifeq ($(UNAME),Darwin)
+CC = clang
+endif
+
+# Linux
+ifeq ($(UNAME),Linux)
 LINKFLAGS = -pthread
 endif
 
-CPP = c++
+# SSE
+ifeq ($(UNAME_P),i386)
+ARCH_386 = -arch i386
+ARCH_x64 = -arch x86_64
+ARCH_FLAGS = -msse2 -DLIBDIVIDE_USE_SSE2=1
+endif
+ifeq ($(UNAME_P),x86_64)
+ARCH_386 = -arch i386
+ARCH_x64 = -arch x86_64
+ARCH_FLAGS = -msse2 -DLIBDIVIDE_USE_SSE2=1
+endif
+ifeq ($(UNAME_P),amd64)
+ARCH_386 = -arch i386
+ARCH_x64 = -arch x86_64
+ARCH_FLAGS = -msse2 -DLIBDIVIDE_USE_SSE2=1
+endif
 
-DEBUG_FLAGS = -fstrict-aliasing -g -O0 -DLIBDIVIDE_ASSERTIONS_ON=1 -msse2 -DLIBDIVIDE_USE_SSE2=1 -W -Wall $(LINKFLAGS)
-RELEASE_FLAGS = -fstrict-aliasing -W -Wall -g -O3 -msse2 -DLIBDIVIDE_USE_SSE2=1  $(LINKFLAGS)
+# NEON
+ifeq ($(UNAME_P),armv7l)
+ARCH_FLAGS = 
+endif
+
+DEBUG_FLAGS   = -fstrict-aliasing -W -Wall -g -O0 -DLIBDIVIDE_ASSERTIONS_ON=1 $(ARCH_FLAGS) $(LINKFLAGS)
+RELEASE_FLAGS = -fstrict-aliasing -W -Wall -g -O3 $(ARCH_FLAGS) $(LINKFLAGS)
 
 tester: debug
 	

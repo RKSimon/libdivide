@@ -105,7 +105,7 @@ private:
         
         
     }
-    
+#ifdef LIBDIVIDE_USE_SSE2
     void test_four(const T *numers, T denom, const divider<T> & the_divider) {
         if (sizeof(T) == 4) {
 #if LIBDIVIDE_VC
@@ -152,7 +152,7 @@ private:
             }
         }
     }
-    
+#endif
     void test_many(T denom) {
         const divider<T> the_divider = divider<T>(denom);
         size_t j;
@@ -162,7 +162,9 @@ private:
             test_one(numers[1], denom, the_divider);
             test_one(numers[2], denom, the_divider);
             test_one(numers[3], denom, the_divider);
+#ifdef LIBDIVIDE_USE_SSE2
             test_four(numers, denom, the_divider);
+#endif
         }
         const T min = std::numeric_limits<T>::min(), max = std::numeric_limits<T>::max();
         const T wellKnownNumers[] = {0, max, max-1, max/2, max/2 - 1, min, min/2, min/4, 1, 2, 3, 4, 5, 6, 7, 8, 10, 36847, 50683, SHRT_MAX};
