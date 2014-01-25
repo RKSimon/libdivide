@@ -44,7 +44,11 @@ protected:
     
 };
 
-template<typename T>
+template<typename T
+#if defined(LIBDIVIDE_USE_SSE2) || defined(LIBDIVIDE_USE_NEON)
+    , typename V
+#endif
+>
 class DivideTest : private DivideTest_PRNG {
 
 private:
@@ -105,7 +109,7 @@ private:
         
         
     }
-#ifdef LIBDIVIDE_USE_SSE2
+#if defined(LIBDIVIDE_USE_SSE2) || defined(LIBDIVIDE_USE_NEON)
     void test_four(const T *numers, T denom, const divider<T> & the_divider) {
         if (sizeof(T) == 4) {
 #if LIBDIVIDE_VC
@@ -113,8 +117,9 @@ private:
 #else
             T __attribute__ ((aligned)) results[4];
 #endif
-            __m128i resultVector = _mm_loadu_si128((const __m128i *)numers) / the_divider;
-            *(__m128i *)results = resultVector;
+            V numerVector; memcpy(&numerVector, numers, sizeof(V));
+            V resultVector = numerVector / the_divider;
+            *(V*)results = resultVector;
             int i;
             for (i=0; i < 4; i++) {
                 T numer = numers[i];
@@ -123,10 +128,10 @@ private:
                 if (actual != expect) {
                     cout << "Vector failure for " << (typeid(T).name()) << ": " <<  numer << " / " << denom << " expected " << expect << " actual " << actual << endl;
                     while (1) ;
-		}
+                }
                 else {
                      //cout << "Vector success for " << numer << " / " << denom << " = " << actual << " (" << i << ")" << endl;
-                }  
+                }
             }
         }
         else if (sizeof(T) == 8) {
@@ -135,8 +140,9 @@ private:
 #else
             T __attribute__ ((aligned)) results[2];
 #endif
-            __m128i resultVector = _mm_loadu_si128((const __m128i *)numers) / the_divider;
-            *(__m128i *)results = resultVector;
+            V numerVector; memcpy(&numerVector, numers, sizeof(V));
+            V resultVector = numerVector / the_divider;
+            *(V*)results = resultVector;
             int i;
             for (i=0; i < 2; i++) {
                 T numer = numers[i];
@@ -145,7 +151,7 @@ private:
                 if (actual != expect) {
                     cout << "Vector Failure for " << (typeid(T).name()) << ": " <<  numer << " / " << denom << " expected " << expect << " actual " << actual << endl;
                     while (1) ;
-		}
+                }
                 else {
                     // cout << "Vector success for " << numer << " / " << denom << " = " << actual << endl;
                 }  
@@ -162,7 +168,7 @@ private:
             test_one(numers[1], denom, the_divider);
             test_one(numers[2], denom, the_divider);
             test_one(numers[3], denom, the_divider);
-#ifdef LIBDIVIDE_USE_SSE2
+#if defined(LIBDIVIDE_USE_SSE2) || defined(LIBDIVIDE_USE_NEON)
             test_four(numers, denom, the_divider);
 #endif
         }
@@ -204,7 +210,13 @@ static void *perform_test(void *ptr) {
         {
             if (! sRunS32) break;
             puts("Starting int32_t");
-            DivideTest<int32_t> dt;
+            DivideTest<int32_t
+#if defined(LIBDIVIDE_USE_SSE2)
+            , __m128i
+#elif defined(LIBDIVIDE_USE_NEON)
+            , int32x4_t
+#endif
+            > dt;
             dt.run();
         }
             break;
@@ -213,7 +225,13 @@ static void *perform_test(void *ptr) {
         {
             if (! sRunU32) break;
             puts("Starting uint32_t");
-            DivideTest<uint32_t> dt;
+            DivideTest<uint32_t
+#if defined(LIBDIVIDE_USE_SSE2)
+            , __m128
+#elif defined(LIBDIVIDE_USE_NEON)
+            , uint32x4_t
+#endif
+            > dt;
             dt.run();
         }
             break;
@@ -222,7 +240,13 @@ static void *perform_test(void *ptr) {
         {
             if (! sRunS64) break;
             puts("Starting sint64_t");
-            DivideTest<int64_t> dt;
+            DivideTest<int64_t
+#if defined(LIBDIVIDE_USE_SSE2)
+            , __m128i
+#elif defined(LIBDIVIDE_USE_NEON)
+            , int64x2_t
+#endif
+            > dt;
             dt.run();
         }
             break;
@@ -231,7 +255,13 @@ static void *perform_test(void *ptr) {
         {
             if (! sRunU64) break;
             puts("Starting uint64_t");
-            DivideTest<uint64_t> dt;
+            DivideTest<uint64_t
+#if defined(LIBDIVIDE_USE_SSE2)
+            , __m128i
+#elif defined(LIBDIVIDE_USE_NEON)
+            , uint64x2_t
+#endif
+            > dt;
             dt.run();
         }
             break;
