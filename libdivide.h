@@ -291,7 +291,7 @@ static inline __m128i libdivide__u64_to_m128(uint64_t x) {
     return _mm_load_si128((const __m128i*)temp);
 #elif __clang__
     // clang does not provide this intrinsic either
-    return (__m128i){x, x};
+    return (__m128i){(int64_t)x, (int64_t)x};
 #else
     // everyone else gets it right
     return _mm_set1_epi64x(x);
@@ -424,9 +424,9 @@ static inline int32_t libdivide__count_trailing_zeros64(uint64_t val) {
     return __builtin_ctzll(val);
 #else
     /* Pretty good way to count trailing zeros.  Note that this hangs for val = 0! */
-    uint32_t lo = val & 0xFFFFFFFF;
+    uint32_t lo = (uint32_t)(val & 0xFFFFFFFF);
     if (lo != 0) return libdivide__count_trailing_zeros32(lo);
-    return 32 + libdivide__count_trailing_zeros32(val >> 32);
+    return 32 + libdivide__count_trailing_zeros32((uint32_t)(val >> 32));
 #endif
 }
  

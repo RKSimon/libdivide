@@ -73,7 +73,7 @@ private:
     void test_one(T numer, T denom, const divider<T> & the_divider) {
         T expect = numer / denom;
         T actual1 = numer / the_divider;
-        T actual2 = -1;
+        T actual2 = (T)-1;
         switch (the_divider.get_algorithm()) {
             case 0: actual2 = numer / unswitch<0>(the_divider); break;
             case 1: actual2 = numer / unswitch<1>(the_divider); break;
@@ -88,8 +88,8 @@ private:
         
         if (actual1 != expect) {
             cout << "Failure for " << (typeid(T).name()) << ": " <<  numer << " / " << denom << " expected " << expect << " actual " << actual1 << endl;
-			while (1) ;
-		}
+            while (1) ;
+        }
         else {
 //            cout << "Success for " << numer << " / " << denom << " = " << actual1 << endl;
         }
@@ -157,7 +157,7 @@ private:
         const divider<T> the_divider = divider<T>(denom);
         size_t j;
         for (j=0; j < 100000 / 4; j++) {
-            T numers[4] = {this->next_random(), this->next_random(), this->next_random(), this->next_random()};
+            T numers[4] = {(T)this->next_random(), (T)this->next_random(), (T)this->next_random(), (T)this->next_random()};
             test_one(numers[0], denom, the_divider);
             test_one(numers[1], denom, the_divider);
             test_one(numers[2], denom, the_divider);
