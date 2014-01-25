@@ -399,12 +399,33 @@ static inline __m128i libdivide_mullhi_s32_flat_vector(__m128i a, __m128i b) {
 }
 #endif
 #elif LIBDIVIDE_USE_NEON
+static inline int32x2_t libdivide_mullhi_s32_flat_vector(int32x2_t a, int32x2_t b) {
+	int64x2_t r64 = vmull_s32( a, b );
+	r64 = vreinterpretq_s64_u64( vshrq_n_u64( vreinterpretq_u64_s64(r64), 32 ) );
+	int32x2_t r = vmovn_s64( r64 );
+	return r;
+}
+
 static inline int32x4_t libdivide_mullhi_s32_flat_vector(int32x4_t a, int32x4_t b) {
 	int64x2_t rlo = vmull_s32( vget_low_s32(a), vget_low_s32(b) );
 	int64x2_t rhi = vmull_s32( vget_high_s32(a), vget_high_s32(b) );
 	rlo = vreinterpretq_s64_u64( vshrq_n_u64( vreinterpretq_u64_s64(rlo), 32 ) );
 	rhi = vreinterpretq_s64_u64( vshrq_n_u64( vreinterpretq_u64_s64(rhi), 32 ) );
 	int32x4_t r = vcombine_s32( vmovn_s64( rlo ), vmovn_s64( rhi ) );
+	return r;
+}
+
+static inline int32x4x2_t libdivide_mullhi_s32_flat_vector(int32x4x2_t a, int32x4x2_t b) {
+	int32x4x2_t r;
+	r.val[0] = libdivide_mullhi_s32_flat_vector( a.val[0], b.val[0] );
+	r.val[1] = libdivide_mullhi_s32_flat_vector( a.val[1], b.val[1] );
+	return r;
+}
+
+static inline uint32x2_t libdivide_mullhi_u32_flat_vector(uint32x2_t a, uint32x2_t b) {
+	uint64x2_t r64 = vmull_u32( a, b );
+	r64 = vshrq_n_u64( r64, 32 );
+	uint32x2_t r = vmovn_u64( r64 );
 	return r;
 }
 
@@ -417,6 +438,19 @@ static inline uint32x4_t libdivide_mullhi_u32_flat_vector(uint32x4_t a, uint32x4
 	return r;
 }
 
+static inline uint32x4x2_t libdivide_mullhi_u32_flat_vector(uint32x4x2_t a, uint32x4x2_t b) {
+	uint32x4x2_t r;
+	r.val[0] = libdivide_mullhi_u32_flat_vector( a.val[0], b.val[0] );
+	r.val[1] = libdivide_mullhi_u32_flat_vector( a.val[1], b.val[1] );
+	return r;
+}
+
+static inline int64x1_t libdivide_mullhi_s64_flat_vector(int64x1_t x, int64x1_t y) {
+	int64x1_t r = vdup_n_s64(0);
+	r = vset_lane_s64( libdivide__mullhi_s64( vget_lane_s64(x,0), vget_lane_s64(y,0) ), r, 0 );
+	return r;
+}
+
 static inline int64x2_t libdivide_mullhi_s64_flat_vector(int64x2_t x, int64x2_t y) {
 	int64x2_t r = vdupq_n_s64(0);
 	r = vsetq_lane_s64( libdivide__mullhi_s64( vgetq_lane_s64(x,0), vgetq_lane_s64(y,0) ), r, 0 );
@@ -424,10 +458,30 @@ static inline int64x2_t libdivide_mullhi_s64_flat_vector(int64x2_t x, int64x2_t 
 	return r;
 }
 
+static inline int64x2x2_t libdivide_mullhi_s64_flat_vector(int64x2x2_t a, int64x2x2_t b) {
+	int64x2x2_t r;
+	r.val[0] = libdivide_mullhi_s64_flat_vector( a.val[0], b.val[0] );
+	r.val[1] = libdivide_mullhi_s64_flat_vector( a.val[1], b.val[1] );
+	return r;
+}
+
+static inline uint64x1_t libdivide_mullhi_u64_flat_vector(uint64x1_t x, uint64x1_t y) {
+	uint64x1_t r = vdup_n_u64(0);
+	r = vset_lane_u64( libdivide__mullhi_u64( vget_lane_u64(x,0), vget_lane_u64(y,0) ), r, 0 );
+	return r;
+}
+
 static inline uint64x2_t libdivide_mullhi_u64_flat_vector(uint64x2_t x, uint64x2_t y) {
 	uint64x2_t r = vdupq_n_u64(0);
 	r = vsetq_lane_u64( libdivide__mullhi_u64( vgetq_lane_u64(x,0), vgetq_lane_u64(y,0) ), r, 0 );
 	r = vsetq_lane_u64( libdivide__mullhi_u64( vgetq_lane_u64(x,1), vgetq_lane_u64(y,1) ), r, 1 );
+	return r;
+}
+
+static inline uint64x2x2_t libdivide_mullhi_u64_flat_vector(uint64x2x2_t a, uint64x2x2_t b) {
+	uint64x2x2_t r;
+	r.val[0] = libdivide_mullhi_u64_flat_vector( a.val[0], b.val[0] );
+	r.val[1] = libdivide_mullhi_u64_flat_vector( a.val[1], b.val[1] );
 	return r;
 }
 #endif
@@ -1397,7 +1451,7 @@ namespace libdivide_internal {
     /* Some bogus unswitch functions for unsigned types so the same (presumably templated) code can work for both signed and unsigned. */
     uint32_t crash_u32(uint32_t, const libdivide_u32_t*) { abort(); return *(uint32_t*)NULL; }
     uint64_t crash_u64(uint64_t, const libdivide_u64_t*) { abort(); return *(uint64_t*)NULL; }
-#if LIBDIVIDE_USE_SSE2
+#if LIBDIVIDE_USE_SSE2 || LIBDIVIDE_USE_NEON
     template <typename T>
     T crash_u32_vector(T, const libdivide_u32_t*) { abort(); return *(T*)NULL; }
     template <typename T>
