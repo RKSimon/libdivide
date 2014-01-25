@@ -21,7 +21,7 @@
 #include <windows.h>
 #define LIBDIVIDE_WINDOWS 1
 
-#else
+#elif !defined(LIBDIVIDE_DISABLE_PTHREAD)
 /* Linux or Mac OS X or other Unix */
 #include <pthread.h>
 #endif
@@ -34,7 +34,7 @@ using namespace libdivide;
 class DivideTest_PRNG {
 public:
     DivideTest_PRNG() : seed(SEED) { }
-        
+
 protected:
     uint32_t seed;
     uint32_t next_random(void) {
@@ -256,7 +256,7 @@ int main(int argc, char* argv[]) {
             else if (! strcmp(argv[i], "s32")) sRunS32 = 1;
             else if (! strcmp(argv[i], "s64")) sRunS64 = 1;
             else printf("Unknown test '%s'\n", argv[i]), exit(0);
-        }        
+        }
     }
 
 /* We could use dispatch, but we prefer to use pthreads because dispatch won't run all four tests at once on a two core machine */
@@ -265,13 +265,13 @@ int main(int argc, char* argv[]) {
         perform_test((void *)(intptr_t)x);
     });
 #elif LIBDIVIDE_WINDOWS
-	HANDLE threadArray[4];
-	intptr_t i;
-	for (i=0; i < 4; i++) {
-		threadArray[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)perform_test, (void *)i, 0, NULL);
-	}
-	WaitForMultipleObjects(4, threadArray, TRUE, INFINITE);
-#else
+    HANDLE threadArray[4];
+    intptr_t i;
+    for (i=0; i < 4; i++) {
+        threadArray[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)perform_test, (void *)i, 0, NULL);
+    }
+    WaitForMultipleObjects(4, threadArray, TRUE, INFINITE);
+#elif !defined(LIBDIVIDE_DISABLE_PTHREAD)
     pthread_t threads[4];
     intptr_t i;
     for (i=0; i < 4; i++) {
@@ -284,6 +284,11 @@ int main(int argc, char* argv[]) {
     for (i=0; i < 4; i++) {
         void *dummy;
         pthread_join(threads[i], &dummy);
+    }
+#else
+    intptr_t i;
+    for (i=0; i < 4; i++) {
+        perform_test((void *)i);
     }
 #endif
     return 0;
