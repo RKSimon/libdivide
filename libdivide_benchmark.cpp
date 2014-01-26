@@ -125,7 +125,7 @@ NOINLINE static uint64_t mine_u32(struct FunctionParams_t *params) {
 }
 
 #if LIBDIVIDE_USE_SSE2
-NOINLINE static uint64_t mine_u32_vector(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_4u32_vector(struct FunctionParams_t *params) {
     unsigned iter;
     const struct libdivide_u32_t denom = *(struct libdivide_u32_t *)params->denomPtr;
     const uint32_t *data = (const uint32_t *)params->data;
@@ -138,7 +138,7 @@ NOINLINE static uint64_t mine_u32_vector(struct FunctionParams_t *params) {
     return comps[0] + comps[1] + comps[2] + comps[3];
 }
 
-NOINLINE static uint64_t mine_u32_vector_unswitched(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_4u32_vector_unswitched(struct FunctionParams_t *params) {
     unsigned iter;
     const struct libdivide_u32_t denom = *(struct libdivide_u32_t *)params->denomPtr;
     const uint32_t *data = (const uint32_t *)params->data;
@@ -166,7 +166,7 @@ NOINLINE static uint64_t mine_u32_vector_unswitched(struct FunctionParams_t *par
     return comps[0] + comps[1] + comps[2] + comps[3];
 }
 #elif LIBDIVIDE_USE_NEON
-NOINLINE static uint64_t mine_u32_vector(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_4u32_vector(struct FunctionParams_t *params) {
     unsigned iter;
     const struct libdivide_u32_t denom = *(struct libdivide_u32_t *)params->denomPtr;
     const uint32_t *data = (const uint32_t *)params->data;
@@ -179,7 +179,7 @@ NOINLINE static uint64_t mine_u32_vector(struct FunctionParams_t *params) {
     return comps[0] + comps[1] + comps[2] + comps[3];
 }
 
-NOINLINE static uint64_t mine_u32_vector_unswitched(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_4u32_vector_unswitched(struct FunctionParams_t *params) {
     unsigned iter;
     const struct libdivide_u32_t denom = *(struct libdivide_u32_t *)params->denomPtr;
     const uint32_t *data = (const uint32_t *)params->data;
@@ -273,7 +273,7 @@ NOINLINE static uint64_t mine_s32(struct FunctionParams_t *params) {
 }
 
 #if LIBDIVIDE_USE_SSE2
-NOINLINE static uint64_t mine_s32_vector(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_4s32_vector(struct FunctionParams_t *params) {
     unsigned iter;
     __m128i sumX4 = _mm_setzero_si128();
     const struct libdivide_s32_t denom = *(struct libdivide_s32_t *)params->denomPtr;
@@ -287,7 +287,7 @@ NOINLINE static uint64_t mine_s32_vector(struct FunctionParams_t *params) {
     return sum;
 }
 
-NOINLINE static uint64_t mine_s32_vector_unswitched(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_4s32_vector_unswitched(struct FunctionParams_t *params) {
     unsigned iter;
     __m128i sumX4 = _mm_setzero_si128();
     const struct libdivide_s32_t denom = *(struct libdivide_s32_t *)params->denomPtr;
@@ -328,7 +328,7 @@ NOINLINE static uint64_t mine_s32_vector_unswitched(struct FunctionParams_t *par
     return sum;
 }
 #elif LIBDIVIDE_USE_NEON
-NOINLINE static uint64_t mine_s32_vector(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_4s32_vector(struct FunctionParams_t *params) {
     unsigned iter;
     int32x4_t sumX4 = vdupq_n_s32(0);
     const struct libdivide_s32_t denom = *(struct libdivide_s32_t *)params->denomPtr;
@@ -342,7 +342,7 @@ NOINLINE static uint64_t mine_s32_vector(struct FunctionParams_t *params) {
     return sum;
 }
 
-NOINLINE static uint64_t mine_s32_vector_unswitched(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_4s32_vector_unswitched(struct FunctionParams_t *params) {
     unsigned iter;
     int32x4_t sumX4 = vdupq_n_s32(0);
     const struct libdivide_s32_t denom = *(struct libdivide_s32_t *)params->denomPtr;
@@ -490,7 +490,7 @@ NOINLINE static uint64_t mine_u64_unswitched(struct FunctionParams_t *params) {
 }
 
 #if LIBDIVIDE_USE_SSE2
-NOINLINE static uint64_t mine_u64_vector_unswitched(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_2u64_vector_unswitched(struct FunctionParams_t *params) {
     unsigned iter;
     __m128i sumX2 = _mm_setzero_si128();
     const struct libdivide_u64_t denom = *(struct libdivide_u64_t *)params->denomPtr;
@@ -518,7 +518,7 @@ NOINLINE static uint64_t mine_u64_vector_unswitched(struct FunctionParams_t *par
     return comps[0] + comps[1];
 }
 
-NOINLINE static uint64_t mine_u64_vector(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_2u64_vector(struct FunctionParams_t *params) {
     unsigned iter;
     __m128i sumX2 = _mm_setzero_si128();
     const struct libdivide_u64_t denom = *(struct libdivide_u64_t *)params->denomPtr;
@@ -531,7 +531,7 @@ NOINLINE static uint64_t mine_u64_vector(struct FunctionParams_t *params) {
     return comps[0] + comps[1];
 }
 #elif LIBDIVIDE_USE_NEON
-NOINLINE static uint64_t mine_u64_vector_unswitched(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_2u64_vector_unswitched(struct FunctionParams_t *params) {
     unsigned iter;
     uint64x2_t sumX2 = vdupq_n_u64(0);
     const struct libdivide_u64_t denom = *(struct libdivide_u64_t *)params->denomPtr;
@@ -559,7 +559,7 @@ NOINLINE static uint64_t mine_u64_vector_unswitched(struct FunctionParams_t *par
     return comps[0] + comps[1];
 }
 
-NOINLINE static uint64_t mine_u64_vector(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_2u64_vector(struct FunctionParams_t *params) {
     unsigned iter;
     uint64x2_t sumX2 = vdupq_n_u64(0);
     const struct libdivide_u64_t denom = *(struct libdivide_u64_t *)params->denomPtr;
@@ -608,7 +608,7 @@ NOINLINE static uint64_t mine_s64(struct FunctionParams_t *params) {
 }
 
 #if LIBDIVIDE_USE_SSE2
-NOINLINE static uint64_t mine_s64_vector(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_2s64_vector(struct FunctionParams_t *params) {
     const struct libdivide_s64_t denom = *(struct libdivide_s64_t *)params->denomPtr;
     const int64_t *data = (const int64_t *)params->data;
 
@@ -623,7 +623,7 @@ NOINLINE static uint64_t mine_s64_vector(struct FunctionParams_t *params) {
     return sum;
 }
 
-NOINLINE static uint64_t mine_s64_vector_unswitched(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_2s64_vector_unswitched(struct FunctionParams_t *params) {
     const struct libdivide_s64_t denom = *(struct libdivide_s64_t *)params->denomPtr;
     const int64_t *data = (const int64_t *)params->data;
 
@@ -665,7 +665,7 @@ NOINLINE static uint64_t mine_s64_vector_unswitched(struct FunctionParams_t *par
     return sum;
 }
 #elif LIBDIVIDE_USE_NEON
-NOINLINE static uint64_t mine_s64_vector(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_2s64_vector(struct FunctionParams_t *params) {
     const struct libdivide_s64_t denom = *(struct libdivide_s64_t *)params->denomPtr;
     const int64_t *data = (const int64_t *)params->data;
 
@@ -680,7 +680,7 @@ NOINLINE static uint64_t mine_s64_vector(struct FunctionParams_t *params) {
     return sum;
 }
 
-NOINLINE static uint64_t mine_s64_vector_unswitched(struct FunctionParams_t *params) {
+NOINLINE static uint64_t mine_2s64_vector_unswitched(struct FunctionParams_t *params) {
     const struct libdivide_s64_t denom = *(struct libdivide_s64_t *)params->denomPtr;
     const int64_t *data = (const int64_t *)params->data;
 
@@ -790,16 +790,24 @@ NOINLINE static uint64_t mine_s64_generate(struct FunctionParams_t *params) {
 enum Tests {
     kBaseTest,
     kUnswitchedBaseTest,
-    kVectorTest,
-    kUnswitchedVectorTest,
+    kVec64Test,
+    kVec128Test,
+    kVec256Test,
+    kUnswitchedVec64Test,
+    kUnswitchedVec128Test,
+    kUnswitchedVec256Test,
     kNumTests
 };
 
 const char *strTests[kNumTests] = {
     "scalar",
     "scl_us",
-    "vector",
-    "vec_us"
+    "v64",
+    "v128",
+    "v256",
+    "v64_us"
+    "v128_us"
+    "v256_us"
 };
 
 struct TestResult {
@@ -867,9 +875,13 @@ NOINLINE struct TestResult test_one_u32(uint32_t d, const uint32_t *data) {
 
     struct TestFuncs funcs;
     funcs.funcs[kBaseTest] = mine_u32;
-    funcs.funcs[kVectorTest] = FUNC_VECTOR128(mine_u32_vector);
+    funcs.funcs[kVec64Test] = NULL;
+    funcs.funcs[kVec128Test] = FUNC_VECTOR128(mine_4u32_vector);
+    funcs.funcs[kVec256Test] = NULL;
     funcs.funcs[kUnswitchedBaseTest] = mine_u32_unswitched;
-    funcs.funcs[kUnswitchedVectorTest] = FUNC_VECTOR128(mine_u32_vector_unswitched);
+    funcs.funcs[kUnswitchedVec64Test] = NULL;
+    funcs.funcs[kUnswitchedVec128Test] = FUNC_VECTOR128(mine_4u32_vector_unswitched);
+    funcs.funcs[kUnswitchedVec256Test] = NULL;
     funcs.his = his_u32;
     funcs.generate = mine_u32_generate;
 
@@ -887,9 +899,13 @@ NOINLINE struct TestResult test_one_s32(int32_t d, const int32_t *data) {
 
     struct TestFuncs funcs;
     funcs.funcs[kBaseTest] = mine_s32;
-    funcs.funcs[kVectorTest] = FUNC_VECTOR128(mine_s32_vector);
+    funcs.funcs[kVec64Test] = NULL;
+    funcs.funcs[kVec128Test] = FUNC_VECTOR128(mine_4s32_vector);
+    funcs.funcs[kVec256Test] = NULL;
     funcs.funcs[kUnswitchedBaseTest] = mine_s32_unswitched;
-    funcs.funcs[kUnswitchedVectorTest] = FUNC_VECTOR128(mine_s32_vector_unswitched);
+    funcs.funcs[kUnswitchedVec64Test] = NULL;
+    funcs.funcs[kUnswitchedVec128Test] = FUNC_VECTOR128(mine_4s32_vector_unswitched);
+    funcs.funcs[kUnswitchedVec256Test] = NULL;
     funcs.his = his_s32;
     funcs.generate = mine_s32_generate;
 
@@ -907,9 +923,13 @@ NOINLINE struct TestResult test_one_u64(uint64_t d, const uint64_t *data) {
 
     struct TestFuncs funcs;
     funcs.funcs[kBaseTest] = mine_u64;
-    funcs.funcs[kVectorTest] = FUNC_VECTOR128(mine_u64_vector);
+    funcs.funcs[kVec64Test] = NULL;
+    funcs.funcs[kVec128Test] = FUNC_VECTOR128(mine_2u64_vector);
+    funcs.funcs[kVec256Test] = NULL;
     funcs.funcs[kUnswitchedBaseTest] = mine_u64_unswitched;
-    funcs.funcs[kUnswitchedVectorTest] = FUNC_VECTOR128(mine_u64_vector_unswitched);
+    funcs.funcs[kUnswitchedVec64Test] = NULL;
+    funcs.funcs[kUnswitchedVec128Test] = FUNC_VECTOR128(mine_2u64_vector_unswitched);
+    funcs.funcs[kUnswitchedVec256Test] = NULL;
     funcs.his = his_u64;
     funcs.generate = mine_u64_generate;
 
@@ -927,9 +947,13 @@ NOINLINE struct TestResult test_one_s64(int64_t d, const int64_t *data) {
 
     struct TestFuncs funcs;
     funcs.funcs[kBaseTest] = mine_s64;
-    funcs.funcs[kVectorTest] = FUNC_VECTOR128(mine_s64_vector);
+    funcs.funcs[kVec64Test] = NULL;
+    funcs.funcs[kVec128Test] = FUNC_VECTOR128(mine_2s64_vector);
+    funcs.funcs[kVec256Test] = NULL;
     funcs.funcs[kUnswitchedBaseTest] = mine_s64_unswitched;
-    funcs.funcs[kUnswitchedVectorTest] = FUNC_VECTOR128(mine_s64_vector_unswitched);
+    funcs.funcs[kUnswitchedVec64Test] = NULL;
+    funcs.funcs[kUnswitchedVec128Test] = FUNC_VECTOR128(mine_2s64_vector_unswitched);
+    funcs.funcs[kUnswitchedVec256Test] = NULL;
     funcs.his = his_s64;
     funcs.generate = mine_s64_generate;
 
