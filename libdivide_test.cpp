@@ -110,51 +110,27 @@ private:
 
     }
 #if defined(LIBDIVIDE_USE_SSE2) || defined(LIBDIVIDE_USE_NEON)
-    void test_four(const T *numers, T denom, const divider<T> & the_divider) {
-        if (sizeof(T) == 4) {
+    void test_vec(const T *numers, T denom, const divider<T> & the_divider) {
+        enum { NumElements = sizeof(V)/sizeof(T) };
 #if LIBDIVIDE_VC
-            _declspec(align(16)) T results[4];
+        _declspec(align(16)) T results[NumElements];
 #else
-            T __attribute__ ((aligned)) results[4];
+        T __attribute__ ((aligned)) results[NumElements];
 #endif
-            V numerVector; memcpy(&numerVector, numers, sizeof(V));
-            V resultVector = numerVector / the_divider;
-            *(V*)results = resultVector;
-            int i;
-            for (i=0; i < 4; i++) {
-                T numer = numers[i];
-                T actual = results[i];
-                T expect = numer / denom;
-                if (actual != expect) {
-                    cout << "Vector failure for " << (typeid(T).name()) << ": " <<  numer << " / " << denom << " expected " << expect << " actual " << actual << endl;
-                    while (1) ;
-                }
-                else {
-                     //cout << "Vector success for " << numer << " / " << denom << " = " << actual << " (" << i << ")" << endl;
-                }
+        V numerVector; memcpy(&numerVector, numers, sizeof(V));
+        V resultVector = numerVector / the_divider;
+        *(V*)results = resultVector;
+        int i;
+        for (i=0; i < NumElements; i++) {
+            T numer = numers[i];
+            T actual = results[i];
+            T expect = numer / denom;
+            if (actual != expect) {
+                cout << "Vector failure for " << (typeid(T).name()) << ": " <<  numer << " / " << denom << " expected " << expect << " actual " << actual << endl;
+                while (1) ;
             }
-        }
-        else if (sizeof(T) == 8) {
-#if LIBDIVIDE_VC
-            _declspec(align(16)) T results[2];
-#else
-            T __attribute__ ((aligned)) results[2];
-#endif
-            V numerVector; memcpy(&numerVector, numers, sizeof(V));
-            V resultVector = numerVector / the_divider;
-            *(V*)results = resultVector;
-            int i;
-            for (i=0; i < 2; i++) {
-                T numer = numers[i];
-                T actual = results[i];
-                T expect = numer / denom;
-                if (actual != expect) {
-                    cout << "Vector Failure for " << (typeid(T).name()) << ": " <<  numer << " / " << denom << " expected " << expect << " actual " << actual << endl;
-                    while (1) ;
-                }
-                else {
-                    // cout << "Vector success for " << numer << " / " << denom << " = " << actual << endl;
-                }
+            else {
+                //cout << "Vector success for " << numer << " / " << denom << " = " << actual << " (" << i << ")" << endl;
             }
         }
     }
@@ -169,7 +145,7 @@ private:
             test_one(numers[2], denom, the_divider);
             test_one(numers[3], denom, the_divider);
 #if defined(LIBDIVIDE_USE_SSE2) || defined(LIBDIVIDE_USE_NEON)
-            test_four(numers, denom, the_divider);
+            test_vec(numers, denom, the_divider);
 #endif
         }
         const T min = std::numeric_limits<T>::min(), max = std::numeric_limits<T>::max();
