@@ -811,13 +811,25 @@ NOINLINE static uint64_t mine_s64_vector(struct FunctionParams_t *params) { retu
 NOINLINE static uint64_t mine_s64_vector_unswitched(struct FunctionParams_t *params) { return mine_s64_unswitched(params); }
 #endif
 
+enum Tests {
+    kBaseTest,
+    kUnswitchedBaseTest,
+    kVectorTest,
+    kUnswitchedVectorTest,
+    kNumTests
+};
+
+const char *strTests[kNumTests] = {
+    "scalar",
+    "scl_us",
+    "vector",
+    "vec_us"
+};
+
 struct TestResult {
-    double my_base_time;
-    double my_unswitched_time;
-    double my_vector_time;
-    double my_vector_unswitched_time;
-    double his_time;
+    double times[kNumTests];
     double gen_time;
+    double his_time;
     int algo;
 };
 
@@ -833,12 +845,9 @@ static uint64_t find_min(const uint64_t *vals, size_t cnt) {
 typedef uint64_t (*TestFunc_t)(struct FunctionParams_t *params);
 
 struct TestFuncs {
-    TestFunc_t mine;
-    TestFunc_t mine_vector;
-    TestFunc_t mine_unswitched;
-    TestFunc_t mine_vector_unswitched;
-    TestFunc_t his;
+    TestFunc_t funcs[kNumTests];
     TestFunc_t generate;
+    TestFunc_t his;
 };
 
 NOINLINE
@@ -849,30 +858,27 @@ struct TestResult test_one(TestFuncs *funcs, struct FunctionParams_t *params) {
 
 #define CHECK(actual, expected) do { if (1 && actual != expected) printf("Failure on line %lu\n", (unsigned long)__LINE__); } while (0)
 
-    uint64_t my_times[TEST_COUNT], my_times_unswitched[TEST_COUNT], my_times_vector[TEST_COUNT], my_times_vector_unswitched[TEST_COUNT], his_times[TEST_COUNT], gen_times[TEST_COUNT];
-    unsigned iter;
+    uint64_t my_times[kNumTests][TEST_COUNT], his_times[TEST_COUNT], gen_times[TEST_COUNT];
+    unsigned iter, test;
     struct time_result tresult;
     for (iter = 0; iter < TEST_COUNT; iter++) {
         tresult = time_function(funcs->his, params); his_times[iter] = tresult.time; const uint64_t expected = tresult.result;
-        tresult = time_function(funcs->mine, params); my_times[iter] = tresult.time; CHECK(tresult.result, expected);
-        tresult = time_function(funcs->mine_unswitched, params); my_times_unswitched[iter] = tresult.time; CHECK(tresult.result, expected);
-#if LIBDIVIDE_USE_SSE2 || LIBDIVIDE_USE_NEON
-        tresult = time_function(funcs->mine_vector_unswitched, params); my_times_vector_unswitched[iter] = tresult.time; CHECK(tresult.result, expected);
-        tresult = time_function(funcs->mine_vector, params); my_times_vector[iter] = tresult.time; CHECK(tresult.result, expected);
-#else
-        my_times_vector[iter]=0;
-        my_times_vector_unswitched[iter] = 0;
-#endif
+        for (test = 0; test < kNumTests; test++) {
+            if (funcs->funcs[test]) {
+                tresult = time_function(funcs->funcs[test], params); my_times[test][iter] = tresult.time; CHECK(tresult.result, expected);
+            } else {
+                my_times[test][iter] = 0;
+            }
+        }
         tresult = time_function(funcs->generate, params); gen_times[iter] = tresult.time;
     }
 
-    result.gen_time = find_min(gen_times, TEST_COUNT) / (double)GEN_ITERATIONS;
-    result.my_base_time = find_min(my_times, TEST_COUNT) / (double)ITERATIONS;
-    result.my_vector_time = find_min(my_times_vector, TEST_COUNT) / (double)ITERATIONS;
-    //printf("%f - %f\n", find_min(my_times_vector, TEST_COUNT) / (double)ITERATIONS, result.my_vector_time);
-    result.my_unswitched_time = find_min(my_times_unswitched, TEST_COUNT) / (double)ITERATIONS;
-    result.my_vector_unswitched_time = find_min(my_times_vector_unswitched, TEST_COUNT) / (double)ITERATIONS;
     result.his_time = find_min(his_times, TEST_COUNT) / (double)ITERATIONS;
+    result.gen_time = find_min(gen_times, TEST_COUNT) / (double)GEN_ITERATIONS;
+
+    for (test = 0; test < kNumTests; test++) {
+        result.times[test] = find_min(my_times[test], TEST_COUNT) / (double)ITERATIONS;
+    }
     return result;
 #undef TEST_COUNT
 }
@@ -886,10 +892,10 @@ struct TestResult test_one_u32(uint32_t d, const uint32_t *data) {
     params.data = data;
 
     struct TestFuncs funcs;
-    funcs.mine = mine_u32;
-    funcs.mine_vector = mine_u32_vector;
-    funcs.mine_unswitched = mine_u32_unswitched;
-    funcs.mine_vector_unswitched = mine_u32_vector_unswitched;
+    funcs.funcs[kBaseTest] = mine_u32;
+    funcs.funcs[kVectorTest] = mine_u32_vector;
+    funcs.funcs[kUnswitchedBaseTest] = mine_u32_unswitched;
+    funcs.funcs[kUnswitchedVectorTest] = mine_u32_vector_unswitched;
     funcs.his = his_u32;
     funcs.generate = mine_u32_generate;
 
@@ -907,10 +913,10 @@ struct TestResult test_one_s32(int32_t d, const int32_t *data) {
     params.data = data;
 
     struct TestFuncs funcs;
-    funcs.mine = mine_s32;
-    funcs.mine_vector = mine_s32_vector;
-    funcs.mine_unswitched = mine_s32_unswitched;
-    funcs.mine_vector_unswitched = mine_s32_vector_unswitched;
+    funcs.funcs[kBaseTest] = mine_s32;
+    funcs.funcs[kVectorTest] = mine_s32_vector;
+    funcs.funcs[kUnswitchedBaseTest] = mine_s32_unswitched;
+    funcs.funcs[kUnswitchedVectorTest] = mine_s32_vector_unswitched;
     funcs.his = his_s32;
     funcs.generate = mine_s32_generate;
 
@@ -928,10 +934,10 @@ struct TestResult test_one_u64(uint64_t d, const uint64_t *data) {
     params.data = data;
 
     struct TestFuncs funcs;
-    funcs.mine = mine_u64;
-    funcs.mine_vector = mine_u64_vector;
-    funcs.mine_unswitched = mine_u64_unswitched;
-    funcs.mine_vector_unswitched = mine_u64_vector_unswitched;
+    funcs.funcs[kBaseTest] = mine_u64;
+    funcs.funcs[kVectorTest] = mine_u64_vector;
+    funcs.funcs[kUnswitchedBaseTest] = mine_u64_unswitched;
+    funcs.funcs[kUnswitchedVectorTest] = mine_u64_vector_unswitched;
     funcs.his = his_u64;
     funcs.generate = mine_u64_generate;
 
@@ -949,10 +955,10 @@ struct TestResult test_one_s64(int64_t d, const int64_t *data) {
     params.data = data;
 
     struct TestFuncs funcs;
-    funcs.mine = mine_s64;
-    funcs.mine_vector = mine_s64_vector;
-    funcs.mine_unswitched = mine_s64_unswitched;
-    funcs.mine_vector_unswitched = mine_s64_vector_unswitched;
+    funcs.funcs[kBaseTest] = mine_s64;
+    funcs.funcs[kVectorTest] = mine_s64_vector;
+    funcs.funcs[kUnswitchedBaseTest] = mine_s64_unswitched;
+    funcs.funcs[kUnswitchedVectorTest] = mine_s64_vector_unswitched;
     funcs.his = his_s64;
     funcs.generate = mine_s64_generate;
 
@@ -961,13 +967,22 @@ struct TestResult test_one_s64(int64_t d, const int64_t *data) {
     return result;
 }
 
-
 static void report_header(void) {
-    printf("%6s%8s%8s%8s%8s%8s%8s%6s\n", "#", "system", "scalar", "scl_us", "vector", "vec_us", "gener", "algo");
+    unsigned test;
+    printf("%6s%8s", "#", "system");
+    for (test = 0; test < kNumTests; test++) {
+        printf("%8s", strTests[test]);
+    }
+    printf("%8s%6s\n", "gener", "algo");
 }
 
 static void report_result(const char *input, struct TestResult result) {
-    printf("%6s%8.3f%8.3f%8.3f%8.3f%8.3f%8.3f%6d\n", input, result.his_time, result.my_base_time, result.my_unswitched_time, result.my_vector_time, result.my_vector_unswitched_time, result.gen_time, result.algo);
+    unsigned test;
+    printf("%6s%8.3f", input, result.his_time);
+    for (test = 0; test < kNumTests; test++) {
+        printf("%8.3f", result.times[test]);
+    }
+    printf("%8.3f%6d\n", result.gen_time, result.algo);
 }
 
 static void test_many_u32(const uint32_t *data) {
@@ -1036,7 +1051,6 @@ static const uint32_t *random_data(unsigned multiple) {
     }
     return data;
 }
-
 
 int main(int argc, char* argv[]) {
 #if LIBDIVIDE_WINDOWS
