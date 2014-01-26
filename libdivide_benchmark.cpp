@@ -832,8 +832,17 @@ static uint64_t find_min(const uint64_t *vals, size_t cnt) {
 
 typedef uint64_t (*TestFunc_t)(struct FunctionParams_t *params);
 
+struct TestFuncs {
+    TestFunc_t mine;
+    TestFunc_t mine_vector;
+    TestFunc_t mine_unswitched;
+    TestFunc_t mine_vector_unswitched;
+    TestFunc_t his;
+    TestFunc_t generate;
+};
+
 NOINLINE
-struct TestResult test_one(TestFunc_t mine, TestFunc_t mine_vector, TestFunc_t mine_unswitched, TestFunc_t mine_vector_unswitched, TestFunc_t his, TestFunc_t generate, struct FunctionParams_t *params) {
+struct TestResult test_one(TestFuncs *funcs, struct FunctionParams_t *params) {
 #define TEST_COUNT 3
     struct TestResult result;
     memset(&result, 0, sizeof result);
@@ -844,17 +853,17 @@ struct TestResult test_one(TestFunc_t mine, TestFunc_t mine_vector, TestFunc_t m
     unsigned iter;
     struct time_result tresult;
     for (iter = 0; iter < TEST_COUNT; iter++) {
-        tresult = time_function(his, params); his_times[iter] = tresult.time; const uint64_t expected = tresult.result;
-        tresult = time_function(mine, params); my_times[iter] = tresult.time; CHECK(tresult.result, expected);
-        tresult = time_function(mine_unswitched, params); my_times_unswitched[iter] = tresult.time; CHECK(tresult.result, expected);
+        tresult = time_function(funcs->his, params); his_times[iter] = tresult.time; const uint64_t expected = tresult.result;
+        tresult = time_function(funcs->mine, params); my_times[iter] = tresult.time; CHECK(tresult.result, expected);
+        tresult = time_function(funcs->mine_unswitched, params); my_times_unswitched[iter] = tresult.time; CHECK(tresult.result, expected);
 #if LIBDIVIDE_USE_SSE2 || LIBDIVIDE_USE_NEON
-        tresult = time_function(mine_vector_unswitched, params); my_times_vector_unswitched[iter] = tresult.time; CHECK(tresult.result, expected);
-        tresult = time_function(mine_vector, params); my_times_vector[iter] = tresult.time; CHECK(tresult.result, expected);
+        tresult = time_function(funcs->mine_vector_unswitched, params); my_times_vector_unswitched[iter] = tresult.time; CHECK(tresult.result, expected);
+        tresult = time_function(funcs->mine_vector, params); my_times_vector[iter] = tresult.time; CHECK(tresult.result, expected);
 #else
         my_times_vector[iter]=0;
         my_times_vector_unswitched[iter] = 0;
 #endif
-        tresult = time_function(generate, params); gen_times[iter] = tresult.time;
+        tresult = time_function(funcs->generate, params); gen_times[iter] = tresult.time;
     }
 
     result.gen_time = find_min(gen_times, TEST_COUNT) / (double)GEN_ITERATIONS;
@@ -876,7 +885,15 @@ struct TestResult test_one_u32(uint32_t d, const uint32_t *data) {
     params.denomPtr = &div_struct;
     params.data = data;
 
-    struct TestResult result = test_one(mine_u32, mine_u32_vector, mine_u32_unswitched, mine_u32_vector_unswitched, his_u32, mine_u32_generate, &params);
+    struct TestFuncs funcs;
+    funcs.mine = mine_u32;
+    funcs.mine_vector = mine_u32_vector;
+    funcs.mine_unswitched = mine_u32_unswitched;
+    funcs.mine_vector_unswitched = mine_u32_vector_unswitched;
+    funcs.his = his_u32;
+    funcs.generate = mine_u32_generate;
+
+    struct TestResult result = test_one(&funcs, &params);
     result.algo = libdivide_u32_get_algorithm(&div_struct);
     return result;
 }
@@ -889,7 +906,15 @@ struct TestResult test_one_s32(int32_t d, const int32_t *data) {
     params.denomPtr = &div_struct;
     params.data = data;
 
-    struct TestResult result = test_one(mine_s32, mine_s32_vector, mine_s32_unswitched, mine_s32_vector_unswitched, his_s32, mine_s32_generate, &params);
+    struct TestFuncs funcs;
+    funcs.mine = mine_s32;
+    funcs.mine_vector = mine_s32_vector;
+    funcs.mine_unswitched = mine_s32_unswitched;
+    funcs.mine_vector_unswitched = mine_s32_vector_unswitched;
+    funcs.his = his_s32;
+    funcs.generate = mine_s32_generate;
+
+    struct TestResult result = test_one(&funcs, &params);
     result.algo = libdivide_s32_get_algorithm(&div_struct);
     return result;
 }
@@ -902,7 +927,15 @@ struct TestResult test_one_u64(uint64_t d, const uint64_t *data) {
     params.denomPtr = &div_struct;
     params.data = data;
 
-    struct TestResult result = test_one(mine_u64, mine_u64_vector, mine_u64_unswitched, mine_u64_vector_unswitched, his_u64, mine_u64_generate, &params);
+    struct TestFuncs funcs;
+    funcs.mine = mine_u64;
+    funcs.mine_vector = mine_u64_vector;
+    funcs.mine_unswitched = mine_u64_unswitched;
+    funcs.mine_vector_unswitched = mine_u64_vector_unswitched;
+    funcs.his = his_u64;
+    funcs.generate = mine_u64_generate;
+
+    struct TestResult result = test_one(&funcs, &params);
     result.algo = libdivide_u64_get_algorithm(&div_struct);
     return result;
 }
@@ -915,7 +948,15 @@ struct TestResult test_one_s64(int64_t d, const int64_t *data) {
     params.denomPtr = &div_struct;
     params.data = data;
 
-    struct TestResult result = test_one(mine_s64, mine_s64_vector, mine_s64_unswitched, mine_s64_vector_unswitched, his_s64, mine_s64_generate, &params);
+    struct TestFuncs funcs;
+    funcs.mine = mine_s64;
+    funcs.mine_vector = mine_s64_vector;
+    funcs.mine_unswitched = mine_s64_unswitched;
+    funcs.mine_vector_unswitched = mine_s64_vector_unswitched;
+    funcs.his = his_s64;
+    funcs.generate = mine_s64_generate;
+
+    struct TestResult result = test_one(&funcs, &params);
     result.algo = libdivide_s64_get_algorithm(&div_struct);
     return result;
 }
