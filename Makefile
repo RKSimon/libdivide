@@ -60,8 +60,8 @@ x86_64: libdivide_test.cpp libdivide.h
 release: libdivide_test.cpp libdivide.h
 	$(CPP) $(RELEASE_FLAGS) $(ARCH_x64) $(ARCH_386) -o tester libdivide_test.cpp
 
-benchmark: libdivide_benchmark.c libdivide.h
-	$(CC) $(RELEASE_FLAGS) $(ARCH_x64) $(ARCH_386) -o benchmark libdivide_benchmark.c
+benchmark: libdivide_benchmark.cpp libdivide.h
+	$(CPP) $(RELEASE_FLAGS) $(ARCH_x64) $(ARCH_386) -o benchmark libdivide_benchmark.cpp
 
 clean:
 	rm -Rf tester tester.dSYM benchmark benchmark.dSYM
