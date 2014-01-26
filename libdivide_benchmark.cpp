@@ -78,14 +78,14 @@ struct time_result {
 static struct time_result time_function(uint64_t (*func)(struct FunctionParams_t*), struct FunctionParams_t *params) {
     struct time_result tresult;
 #if LIBDIVIDE_WINDOWS
-	LARGE_INTEGER start, end;
-	QueryPerformanceCounter(&start);
-	uint64_t result = func(params);
-	QueryPerformanceCounter(&end);
-	uint64_t diff = end.QuadPart - start.QuadPart;
-	sGlobalUInt64 += result;
-	tresult.result = result;
-	tresult.time = (diff * 1000000000) / gPerfCounterFreq.QuadPart;
+    LARGE_INTEGER start, end;
+    QueryPerformanceCounter(&start);
+    uint64_t result = func(params);
+    QueryPerformanceCounter(&end);
+    uint64_t diff = end.QuadPart - start.QuadPart;
+    sGlobalUInt64 += result;
+    tresult.result = result;
+    tresult.time = (diff * 1000000000) / gPerfCounterFreq.QuadPart;
 #else
     uint64_t start = nanoseconds();
     uint64_t result = func(params);
@@ -95,7 +95,7 @@ static struct time_result time_function(uint64_t (*func)(struct FunctionParams_t
     tresult.result = result;
     tresult.time = diff;
 #endif
-	return tresult;
+    return tresult;
 }
 
 //U32
@@ -156,44 +156,44 @@ NOINLINE static uint64_t mine_u32_vector_unswitched(struct FunctionParams_t *par
 }
 #elif LIBDIVIDE_USE_NEON
 NOINLINE static uint64_t mine_u32_vector(struct FunctionParams_t *params) {
-	unsigned iter;
-	const struct libdivide_u32_t denom = *(struct libdivide_u32_t *)params->denomPtr;
-	const uint32_t *data = (const uint32_t *)params->data;
-	uint32x4_t sumX4 = vdupq_n_u32(0);
-	for (iter = 0; iter < ITERATIONS; iter+=4) {
-		uint32x4_t numers = *((const uint32x4_t*)(data + iter));
-		sumX4 = vaddq_u32(sumX4, libdivide_u32_do_vector(numers, &denom));
-	}
-	const uint32_t *comps = (const uint32_t *)&sumX4;
-	return comps[0] + comps[1] + comps[2] + comps[3];
+    unsigned iter;
+    const struct libdivide_u32_t denom = *(struct libdivide_u32_t *)params->denomPtr;
+    const uint32_t *data = (const uint32_t *)params->data;
+    uint32x4_t sumX4 = vdupq_n_u32(0);
+    for (iter = 0; iter < ITERATIONS; iter+=4) {
+        uint32x4_t numers = *((const uint32x4_t*)(data + iter));
+        sumX4 = vaddq_u32(sumX4, libdivide_u32_do_vector(numers, &denom));
+    }
+    const uint32_t *comps = (const uint32_t *)&sumX4;
+    return comps[0] + comps[1] + comps[2] + comps[3];
 }
 
 NOINLINE static uint64_t mine_u32_vector_unswitched(struct FunctionParams_t *params) {
-	unsigned iter;
-	const struct libdivide_u32_t denom = *(struct libdivide_u32_t *)params->denomPtr;
-	const uint32_t *data = (const uint32_t *)params->data;
-	uint32x4_t sumX4 = vdupq_n_u32(0);
-	int algo = libdivide_u32_get_algorithm(&denom);
-	if (algo == 0) {
-		for (iter = 0; iter < ITERATIONS; iter+=4) {
-			uint32x4_t numers = *((const uint32x4_t*)(data + iter));
-			sumX4 = vaddq_u32(sumX4, libdivide_u32_do_vector_alg0(numers, &denom));
-		}
-	}
-	else if (algo == 1) {
-		for (iter = 0; iter < ITERATIONS; iter+=4) {
-			uint32x4_t numers = *((const uint32x4_t*)(data + iter));
-			sumX4 = vaddq_u32(sumX4, libdivide_u32_do_vector_alg1(numers, &denom));
-		}
-	}
-	else if (algo == 2) {
-		for (iter = 0; iter < ITERATIONS; iter+=4) {
-			uint32x4_t numers = *((const uint32x4_t*)(data + iter));
-			sumX4 = vaddq_u32(sumX4, libdivide_u32_do_vector_alg2(numers, &denom));
-		}
-	}
-	const uint32_t *comps = (const uint32_t *)&sumX4;
-	return comps[0] + comps[1] + comps[2] + comps[3];
+    unsigned iter;
+    const struct libdivide_u32_t denom = *(struct libdivide_u32_t *)params->denomPtr;
+    const uint32_t *data = (const uint32_t *)params->data;
+    uint32x4_t sumX4 = vdupq_n_u32(0);
+    int algo = libdivide_u32_get_algorithm(&denom);
+    if (algo == 0) {
+        for (iter = 0; iter < ITERATIONS; iter+=4) {
+            uint32x4_t numers = *((const uint32x4_t*)(data + iter));
+            sumX4 = vaddq_u32(sumX4, libdivide_u32_do_vector_alg0(numers, &denom));
+        }
+    }
+    else if (algo == 1) {
+        for (iter = 0; iter < ITERATIONS; iter+=4) {
+            uint32x4_t numers = *((const uint32x4_t*)(data + iter));
+            sumX4 = vaddq_u32(sumX4, libdivide_u32_do_vector_alg1(numers, &denom));
+        }
+    }
+    else if (algo == 2) {
+        for (iter = 0; iter < ITERATIONS; iter+=4) {
+            uint32x4_t numers = *((const uint32x4_t*)(data + iter));
+            sumX4 = vaddq_u32(sumX4, libdivide_u32_do_vector_alg2(numers, &denom));
+        }
+    }
+    const uint32_t *comps = (const uint32_t *)&sumX4;
+    return comps[0] + comps[1] + comps[2] + comps[3];
 }
 #endif
 
@@ -324,60 +324,60 @@ static uint64_t mine_s32_vector_unswitched(struct FunctionParams_t *params) {
 }
 #elif LIBDIVIDE_USE_NEON
 NOINLINE
-	static uint64_t mine_s32_vector(struct FunctionParams_t *params) {
-		unsigned iter;
-		int32x4_t sumX4 = vdupq_n_s32(0);
-		const struct libdivide_s32_t denom = *(struct libdivide_s32_t *)params->denomPtr;
-		const int32_t *data = (const int32_t *)params->data;
-		for (iter = 0; iter < ITERATIONS; iter+=4) {
-			int32x4_t numers = *((const int32x4_t*)(data + iter));
-			sumX4 = vaddq_s32(sumX4, libdivide_s32_do_vector(numers, &denom));
-		}
-		const int32_t *comps = (const int32_t *)&sumX4;
-		int32_t sum = comps[0] + comps[1] + comps[2] + comps[3];
-		return sum;
+    static uint64_t mine_s32_vector(struct FunctionParams_t *params) {
+        unsigned iter;
+        int32x4_t sumX4 = vdupq_n_s32(0);
+        const struct libdivide_s32_t denom = *(struct libdivide_s32_t *)params->denomPtr;
+        const int32_t *data = (const int32_t *)params->data;
+        for (iter = 0; iter < ITERATIONS; iter+=4) {
+            int32x4_t numers = *((const int32x4_t*)(data + iter));
+            sumX4 = vaddq_s32(sumX4, libdivide_s32_do_vector(numers, &denom));
+        }
+        const int32_t *comps = (const int32_t *)&sumX4;
+        int32_t sum = comps[0] + comps[1] + comps[2] + comps[3];
+        return sum;
 }
 
 NOINLINE
-	static uint64_t mine_s32_vector_unswitched(struct FunctionParams_t *params) {
-		unsigned iter;
-		int32x4_t sumX4 = vdupq_n_s32(0);
-		const struct libdivide_s32_t denom = *(struct libdivide_s32_t *)params->denomPtr;
-		const int32_t *data = (const int32_t *)params->data;
-		int algo = libdivide_s32_get_algorithm(&denom);
-		if (algo == 0) {
-			for (iter = 0; iter < ITERATIONS; iter+=4) {
-				int32x4_t numers = *((const int32x4_t*)(data + iter));
-				sumX4 = vaddq_s32(sumX4, libdivide_s32_do_vector_alg0(numers, &denom));
-			}
-		}
-		else if (algo == 1) {
-			for (iter = 0; iter < ITERATIONS; iter+=4) {
-				int32x4_t numers = *((const int32x4_t*)(data + iter));
-				sumX4 = vaddq_s32(sumX4, libdivide_s32_do_vector_alg1(numers, &denom));
-			}
-		}
-		else if (algo == 2) {
-			for (iter = 0; iter < ITERATIONS; iter+=4) {
-				int32x4_t numers = *((const int32x4_t*)(data + iter));
-				sumX4 = vaddq_s32(sumX4, libdivide_s32_do_vector_alg2(numers, &denom));
-			}
-		}
-		else if (algo == 3) {
-			for (iter = 0; iter < ITERATIONS; iter+=4) {
-				int32x4_t numers = *((const int32x4_t*)(data + iter));
-				sumX4 = vaddq_s32(sumX4, libdivide_s32_do_vector_alg3(numers, &denom));
-			}
-		}
-		else if (algo == 4) {
-			for (iter = 0; iter < ITERATIONS; iter+=4) {
-				int32x4_t numers = *((const int32x4_t*)(data + iter));
-				sumX4 = vaddq_s32(sumX4, libdivide_s32_do_vector_alg4(numers, &denom));
-			}
-		}
-		const int32_t *comps = (const int32_t *)&sumX4;
-		int32_t sum = comps[0] + comps[1] + comps[2] + comps[3];
-		return sum;
+    static uint64_t mine_s32_vector_unswitched(struct FunctionParams_t *params) {
+        unsigned iter;
+        int32x4_t sumX4 = vdupq_n_s32(0);
+        const struct libdivide_s32_t denom = *(struct libdivide_s32_t *)params->denomPtr;
+        const int32_t *data = (const int32_t *)params->data;
+        int algo = libdivide_s32_get_algorithm(&denom);
+        if (algo == 0) {
+            for (iter = 0; iter < ITERATIONS; iter+=4) {
+                int32x4_t numers = *((const int32x4_t*)(data + iter));
+                sumX4 = vaddq_s32(sumX4, libdivide_s32_do_vector_alg0(numers, &denom));
+            }
+        }
+        else if (algo == 1) {
+            for (iter = 0; iter < ITERATIONS; iter+=4) {
+                int32x4_t numers = *((const int32x4_t*)(data + iter));
+                sumX4 = vaddq_s32(sumX4, libdivide_s32_do_vector_alg1(numers, &denom));
+            }
+        }
+        else if (algo == 2) {
+            for (iter = 0; iter < ITERATIONS; iter+=4) {
+                int32x4_t numers = *((const int32x4_t*)(data + iter));
+                sumX4 = vaddq_s32(sumX4, libdivide_s32_do_vector_alg2(numers, &denom));
+            }
+        }
+        else if (algo == 3) {
+            for (iter = 0; iter < ITERATIONS; iter+=4) {
+                int32x4_t numers = *((const int32x4_t*)(data + iter));
+                sumX4 = vaddq_s32(sumX4, libdivide_s32_do_vector_alg3(numers, &denom));
+            }
+        }
+        else if (algo == 4) {
+            for (iter = 0; iter < ITERATIONS; iter+=4) {
+                int32x4_t numers = *((const int32x4_t*)(data + iter));
+                sumX4 = vaddq_s32(sumX4, libdivide_s32_do_vector_alg4(numers, &denom));
+            }
+        }
+        const int32_t *comps = (const int32_t *)&sumX4;
+        int32_t sum = comps[0] + comps[1] + comps[2] + comps[3];
+        return sum;
 }
 #endif
 
@@ -534,44 +534,44 @@ NOINLINE static uint64_t mine_u64_vector(struct FunctionParams_t *params) {
 }
 #elif LIBDIVIDE_USE_NEON
 NOINLINE static uint64_t mine_u64_vector_unswitched(struct FunctionParams_t *params) {
-	unsigned iter;
-	uint64x2_t sumX2 = vdupq_n_u64(0);
-	const struct libdivide_u64_t denom = *(struct libdivide_u64_t *)params->denomPtr;
-	const uint64_t *data = (const uint64_t *)params->data;
-	int algo = libdivide_u64_get_algorithm(&denom);
-	if (algo == 0) {
-		for (iter = 0; iter < ITERATIONS; iter+=2) {
-			uint64x2_t numers = *((const uint64x2_t*)(data + iter));
-			sumX2 = vaddq_u64(sumX2, libdivide_u64_do_vector_alg0(numers, &denom));
-		}
-	}
-	else if (algo == 1) {
-		for (iter = 0; iter < ITERATIONS; iter+=2) {
-			uint64x2_t numers = *((const uint64x2_t*)(data + iter));
-			sumX2 = vaddq_u64(sumX2, libdivide_u64_do_vector_alg1(numers, &denom));
-		}
-	}
-	else if (algo == 2) {
-		for (iter = 0; iter < ITERATIONS; iter+=2) {
-			uint64x2_t numers = *((const uint64x2_t*)(data + iter));
-			sumX2 = vaddq_u64(sumX2, libdivide_u64_do_vector_alg2(numers, &denom));
-		}
-	}
-	const uint64_t *comps = (const uint64_t *)&sumX2;
-	return comps[0] + comps[1];
+    unsigned iter;
+    uint64x2_t sumX2 = vdupq_n_u64(0);
+    const struct libdivide_u64_t denom = *(struct libdivide_u64_t *)params->denomPtr;
+    const uint64_t *data = (const uint64_t *)params->data;
+    int algo = libdivide_u64_get_algorithm(&denom);
+    if (algo == 0) {
+        for (iter = 0; iter < ITERATIONS; iter+=2) {
+            uint64x2_t numers = *((const uint64x2_t*)(data + iter));
+            sumX2 = vaddq_u64(sumX2, libdivide_u64_do_vector_alg0(numers, &denom));
+        }
+    }
+    else if (algo == 1) {
+        for (iter = 0; iter < ITERATIONS; iter+=2) {
+            uint64x2_t numers = *((const uint64x2_t*)(data + iter));
+            sumX2 = vaddq_u64(sumX2, libdivide_u64_do_vector_alg1(numers, &denom));
+        }
+    }
+    else if (algo == 2) {
+        for (iter = 0; iter < ITERATIONS; iter+=2) {
+            uint64x2_t numers = *((const uint64x2_t*)(data + iter));
+            sumX2 = vaddq_u64(sumX2, libdivide_u64_do_vector_alg2(numers, &denom));
+        }
+    }
+    const uint64_t *comps = (const uint64_t *)&sumX2;
+    return comps[0] + comps[1];
 }
 
 NOINLINE static uint64_t mine_u64_vector(struct FunctionParams_t *params) {
-	unsigned iter;
-	uint64x2_t sumX2 = vdupq_n_u64(0);
-	const struct libdivide_u64_t denom = *(struct libdivide_u64_t *)params->denomPtr;
-	const uint64_t *data = (const uint64_t *)params->data;
-	for (iter = 0; iter < ITERATIONS; iter+=2) {
-		uint64x2_t numers = *((const uint64x2_t*)(data + iter));
-		sumX2 = vaddq_u64(sumX2, libdivide_u64_do_vector(numers, &denom));
-	}
-	const uint64_t *comps = (const uint64_t *)&sumX2;
-	return comps[0] + comps[1];
+    unsigned iter;
+    uint64x2_t sumX2 = vdupq_n_u64(0);
+    const struct libdivide_u64_t denom = *(struct libdivide_u64_t *)params->denomPtr;
+    const uint64_t *data = (const uint64_t *)params->data;
+    for (iter = 0; iter < ITERATIONS; iter+=2) {
+        uint64x2_t numers = *((const uint64x2_t*)(data + iter));
+        sumX2 = vaddq_u64(sumX2, libdivide_u64_do_vector(numers, &denom));
+    }
+    const uint64_t *comps = (const uint64_t *)&sumX2;
+    return comps[0] + comps[1];
 }
 #endif
 
@@ -673,62 +673,62 @@ static uint64_t mine_s64_vector_unswitched(struct FunctionParams_t *params) {
 }
 #elif LIBDIVIDE_USE_NEON
 NOINLINE
-	static uint64_t mine_s64_vector(struct FunctionParams_t *params) {
-		const struct libdivide_s64_t denom = *(struct libdivide_s64_t *)params->denomPtr;
-		const int64_t *data = (const int64_t *)params->data;
+    static uint64_t mine_s64_vector(struct FunctionParams_t *params) {
+        const struct libdivide_s64_t denom = *(struct libdivide_s64_t *)params->denomPtr;
+        const int64_t *data = (const int64_t *)params->data;
 
-		unsigned iter;
-		int64x2_t sumX2 = vdupq_n_s64(0);
-		for (iter = 0; iter < ITERATIONS; iter+=2) {
-			int64x2_t numers = *((const int64x2_t*)(data + iter));
-			sumX2 = vaddq_s64(sumX2, libdivide_s64_do_vector(numers, &denom));
-		}
-		const int64_t *comps = (const int64_t *)&sumX2;
-		int64_t sum = comps[0] + comps[1];
-		return sum;
+        unsigned iter;
+        int64x2_t sumX2 = vdupq_n_s64(0);
+        for (iter = 0; iter < ITERATIONS; iter+=2) {
+            int64x2_t numers = *((const int64x2_t*)(data + iter));
+            sumX2 = vaddq_s64(sumX2, libdivide_s64_do_vector(numers, &denom));
+        }
+        const int64_t *comps = (const int64_t *)&sumX2;
+        int64_t sum = comps[0] + comps[1];
+        return sum;
 }
 
 NOINLINE
-	static uint64_t mine_s64_vector_unswitched(struct FunctionParams_t *params) {
-		const struct libdivide_s64_t denom = *(struct libdivide_s64_t *)params->denomPtr;
-		const int64_t *data = (const int64_t *)params->data;
+    static uint64_t mine_s64_vector_unswitched(struct FunctionParams_t *params) {
+        const struct libdivide_s64_t denom = *(struct libdivide_s64_t *)params->denomPtr;
+        const int64_t *data = (const int64_t *)params->data;
 
-		unsigned iter;
-		int64x2_t sumX2 = vdupq_n_s64(0);
-		int algo = libdivide_s64_get_algorithm(&denom);
-		if (algo == 0) {
-			for (iter = 0; iter < ITERATIONS; iter+=2) {
-				int64x2_t numers = *((const int64x2_t*)(data + iter));
-				sumX2 = vaddq_s64(sumX2, libdivide_s64_do_vector_alg0(numers, &denom));
-			}
-		}
-		else if (algo == 1) {
-			for (iter = 0; iter < ITERATIONS; iter+=2) {
-				int64x2_t numers = *((const int64x2_t*)(data + iter));
-				sumX2 = vaddq_s64(sumX2, libdivide_s64_do_vector_alg1(numers, &denom));
-			}
-		}
-		else if (algo == 2) {
-			for (iter = 0; iter < ITERATIONS; iter+=2) {
-				int64x2_t numers = *((const int64x2_t*)(data + iter));
-				sumX2 = vaddq_s64(sumX2, libdivide_s64_do_vector_alg2(numers, &denom));
-			}
-		}
-		else if (algo == 3) {
-			for (iter = 0; iter < ITERATIONS; iter+=2) {
-				int64x2_t numers = *((const int64x2_t*)(data + iter));
-				sumX2 = vaddq_s64(sumX2, libdivide_s64_do_vector_alg3(numers, &denom));
-			}
-		}
-		else if (algo == 4) {
-			for (iter = 0; iter < ITERATIONS; iter+=2) {
-				int64x2_t numers = *((const int64x2_t*)(data + iter));
-				sumX2 = vaddq_s64(sumX2, libdivide_s64_do_vector_alg4(numers, &denom));
-			}
-		}
-		const int64_t *comps = (const int64_t *)&sumX2;
-		int64_t sum = comps[0] + comps[1];
-		return sum;
+        unsigned iter;
+        int64x2_t sumX2 = vdupq_n_s64(0);
+        int algo = libdivide_s64_get_algorithm(&denom);
+        if (algo == 0) {
+            for (iter = 0; iter < ITERATIONS; iter+=2) {
+                int64x2_t numers = *((const int64x2_t*)(data + iter));
+                sumX2 = vaddq_s64(sumX2, libdivide_s64_do_vector_alg0(numers, &denom));
+            }
+        }
+        else if (algo == 1) {
+            for (iter = 0; iter < ITERATIONS; iter+=2) {
+                int64x2_t numers = *((const int64x2_t*)(data + iter));
+                sumX2 = vaddq_s64(sumX2, libdivide_s64_do_vector_alg1(numers, &denom));
+            }
+        }
+        else if (algo == 2) {
+            for (iter = 0; iter < ITERATIONS; iter+=2) {
+                int64x2_t numers = *((const int64x2_t*)(data + iter));
+                sumX2 = vaddq_s64(sumX2, libdivide_s64_do_vector_alg2(numers, &denom));
+            }
+        }
+        else if (algo == 3) {
+            for (iter = 0; iter < ITERATIONS; iter+=2) {
+                int64x2_t numers = *((const int64x2_t*)(data + iter));
+                sumX2 = vaddq_s64(sumX2, libdivide_s64_do_vector_alg3(numers, &denom));
+            }
+        }
+        else if (algo == 4) {
+            for (iter = 0; iter < ITERATIONS; iter+=2) {
+                int64x2_t numers = *((const int64x2_t*)(data + iter));
+                sumX2 = vaddq_s64(sumX2, libdivide_s64_do_vector_alg4(numers, &denom));
+            }
+        }
+        const int64_t *comps = (const int64_t *)&sumX2;
+        int64_t sum = comps[0] + comps[1];
+        return sum;
 }
 #endif
 
@@ -847,12 +847,12 @@ struct TestResult test_one(TestFunc_t mine, TestFunc_t mine_vector, TestFunc_t m
         tresult = time_function(his, params); his_times[iter] = tresult.time; const uint64_t expected = tresult.result;
         tresult = time_function(mine, params); my_times[iter] = tresult.time; CHECK(tresult.result, expected);
         tresult = time_function(mine_unswitched, params); my_times_unswitched[iter] = tresult.time; CHECK(tresult.result, expected);
-#if LIBDIVIDE_USE_SSE2
+#if LIBDIVIDE_USE_SSE2 || LIBDIVIDE_USE_NEON
         tresult = time_function(mine_vector_unswitched, params); my_times_vector_unswitched[iter] = tresult.time; CHECK(tresult.result, expected);
         tresult = time_function(mine_vector, params); my_times_vector[iter] = tresult.time; CHECK(tresult.result, expected);
 #else
-		my_times_vector[iter]=0;
-		my_times_vector_unswitched[iter] = 0;
+        my_times_vector[iter]=0;
+        my_times_vector_unswitched[iter] = 0;
 #endif
         tresult = time_function(generate, params); gen_times[iter] = tresult.time;
     }
@@ -860,7 +860,7 @@ struct TestResult test_one(TestFunc_t mine, TestFunc_t mine_vector, TestFunc_t m
     result.gen_time = find_min(gen_times, TEST_COUNT) / (double)GEN_ITERATIONS;
     result.my_base_time = find_min(my_times, TEST_COUNT) / (double)ITERATIONS;
     result.my_vector_time = find_min(my_times_vector, TEST_COUNT) / (double)ITERATIONS;
-	//printf("%f - %f\n", find_min(my_times_vector, TEST_COUNT) / (double)ITERATIONS, result.my_vector_time);
+    //printf("%f - %f\n", find_min(my_times_vector, TEST_COUNT) / (double)ITERATIONS, result.my_vector_time);
     result.my_unswitched_time = find_min(my_times_unswitched, TEST_COUNT) / (double)ITERATIONS;
     result.my_vector_unswitched_time = find_min(my_times_vector_unswitched, TEST_COUNT) / (double)ITERATIONS;
     result.his_time = find_min(his_times, TEST_COUNT) / (double)ITERATIONS;
@@ -999,7 +999,7 @@ static const uint32_t *random_data(unsigned multiple) {
 
 int main(int argc, char* argv[]) {
 #if LIBDIVIDE_WINDOWS
-	QueryPerformanceFrequency(&gPerfCounterFreq);
+    QueryPerformanceFrequency(&gPerfCounterFreq);
 #endif
     int i, u32 = 0, u64 = 0, s32 = 0, s64 = 0;
     if (argc == 1) {
