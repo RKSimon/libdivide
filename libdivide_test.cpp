@@ -41,7 +41,7 @@ protected:
         seed = seed * 1664525 + 1013904223U;
         return seed;
     }
-    
+
 };
 
 template<typename T
@@ -52,7 +52,7 @@ template<typename T
 class DivideTest : private DivideTest_PRNG {
 
 private:
-    
+
     uint32_t base_random(void) {
         return this->next_random();
     }
@@ -73,7 +73,7 @@ private:
         }
         return result;
     }
-    
+
     void test_one(T numer, T denom, const divider<T> & the_divider) {
         T expect = numer / denom;
         T actual1 = numer / the_divider;
@@ -84,12 +84,12 @@ private:
             case 2: actual2 = numer / unswitch<2>(the_divider); break;
             case 3: actual2 = numer / unswitch<3>(the_divider); break;
             case 4: actual2 = numer / unswitch<4>(the_divider); break;
-            default: 
+            default:
                 cout << "Unexpected algorithm %d" << the_divider.get_algorithm() << endl;
                 while (1) ;
                 break;
         }
-        
+
         if (actual1 != expect) {
             cout << "Failure for " << (typeid(T).name()) << ": " <<  numer << " / " << denom << " expected " << expect << " actual " << actual1 << endl;
             while (1) ;
@@ -97,8 +97,8 @@ private:
         else {
 //            cout << "Success for " << numer << " / " << denom << " = " << actual1 << endl;
         }
-        
-        
+
+
         if (actual2 != expect) {
             cout << "Unswitched failure for " << (typeid(T).name()) << ": " <<  numer << " / " << denom << " expected " << expect << " actual " << actual1 << endl;
             while (1) ;
@@ -106,8 +106,8 @@ private:
         else {
 //            cout << "Unswitched Success for " << numer << " / " << denom << " = " << actual2 << endl;
         }
-        
-        
+
+
     }
 #if defined(LIBDIVIDE_USE_SSE2) || defined(LIBDIVIDE_USE_NEON)
     void test_four(const T *numers, T denom, const divider<T> & the_divider) {
@@ -154,7 +154,7 @@ private:
                 }
                 else {
                     // cout << "Vector success for " << numer << " / " << denom << " = " << actual << endl;
-                }  
+                }
             }
         }
     }
@@ -184,7 +184,7 @@ private:
             powerOf2Numer <<= 1;
         }
     }
-    
+
 public:
     void run(void) {
         unsigned i;
@@ -220,7 +220,7 @@ static void *perform_test(void *ptr) {
             dt.run();
         }
             break;
-            
+
         case 1:
         {
             if (! sRunU32) break;
@@ -235,7 +235,7 @@ static void *perform_test(void *ptr) {
             dt.run();
         }
             break;
-            
+
         case 2:
         {
             if (! sRunS64) break;
@@ -250,7 +250,7 @@ static void *perform_test(void *ptr) {
             dt.run();
         }
             break;
-            
+
         case 3:
         {
             if (! sRunU64) break;
