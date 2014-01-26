@@ -831,21 +831,25 @@ uint32x4x2_t libdivide_u32_do_vector(uint32x4x2_t numers, const struct libdivide
     uint32x4x2_t r;
     uint8_t more = denom->more;
     if (more & LIBDIVIDE_U32_SHIFT_PATH) {
-        r.val[0] = vshlq_u32(numers.val[0], vdupq_n_s32(-(more & LIBDIVIDE_32_SHIFT_MASK)));
-        r.val[1] = vshlq_u32(numers.val[1], vdupq_n_s32(-(more & LIBDIVIDE_32_SHIFT_MASK)));
+        int32x4_t shift = vdupq_n_s32(-(more & LIBDIVIDE_32_SHIFT_MASK));
+        r.val[0] = vshlq_u32(numers.val[0], shift);
+        r.val[1] = vshlq_u32(numers.val[1], shift);
     }
     else {
-        r.val[0] = libdivide_mullhi_u32_flat_vector(numers.val[0], vdupq_n_u32(denom->magic));
-        r.val[1] = libdivide_mullhi_u32_flat_vector(numers.val[1], vdupq_n_u32(denom->magic));
+        uint32x4_t magic = vdupq_n_u32(denom->magic);
+        r.val[0] = libdivide_mullhi_u32_flat_vector(numers.val[0], magic);
+        r.val[1] = libdivide_mullhi_u32_flat_vector(numers.val[1], magic);
         if (more & LIBDIVIDE_ADD_MARKER) {
+            int32x4_t shift = vdupq_n_s32(-(more & LIBDIVIDE_32_SHIFT_MASK));
             r.val[0] = vaddq_u32(vhsubq_u32(numers.val[0], r.val[0]), r.val[0]);
             r.val[1] = vaddq_u32(vhsubq_u32(numers.val[1], r.val[1]), r.val[1]);
-            r.val[0] = vshlq_u32(r.val[0], vdupq_n_s32(-(more & LIBDIVIDE_32_SHIFT_MASK)));
-            r.val[1] = vshlq_u32(r.val[1], vdupq_n_s32(-(more & LIBDIVIDE_32_SHIFT_MASK)));
+            r.val[0] = vshlq_u32(r.val[0], shift);
+            r.val[1] = vshlq_u32(r.val[1], shift);
         }
         else {
-            r.val[0] = vshlq_u32(r.val[0], vdupq_n_s32(-more));
-            r.val[1] = vshlq_u32(r.val[1], vdupq_n_s32(-more));
+            int32x4_t shift = vdupq_n_s32(-more);
+            r.val[0] = vshlq_u32(r.val[0], shift);
+            r.val[1] = vshlq_u32(r.val[1], shift);
         }
     }
     return r;
@@ -1049,21 +1053,25 @@ uint64x2x2_t libdivide_u64_do_vector(uint64x2x2_t numers, const struct libdivide
     uint64x2x2_t r;
     uint8_t more = denom->more;
     if (more & LIBDIVIDE_U64_SHIFT_PATH) {
-        r.val[0] = vshlq_u64(numers.val[0], vdupq_n_s64(-(more & LIBDIVIDE_64_SHIFT_MASK)));
-        r.val[1] = vshlq_u64(numers.val[1], vdupq_n_s64(-(more & LIBDIVIDE_64_SHIFT_MASK)));
+        int64x2_t shift = vdupq_n_s64(-(more & LIBDIVIDE_64_SHIFT_MASK));
+        r.val[0] = vshlq_u64(numers.val[0], shift);
+        r.val[1] = vshlq_u64(numers.val[1], shift);
     }
     else {
-        r.val[0] = libdivide_mullhi_u64_flat_vector(numers.val[0], vdupq_n_u64(denom->magic));
-        r.val[1] = libdivide_mullhi_u64_flat_vector(numers.val[1], vdupq_n_u64(denom->magic));
+        uint64x2_t magic = vdupq_n_u64(denom->magic);
+        r.val[0] = libdivide_mullhi_u64_flat_vector(numers.val[0], magic);
+        r.val[1] = libdivide_mullhi_u64_flat_vector(numers.val[1], magic);
         if (more & LIBDIVIDE_ADD_MARKER) {
+            int64x2_t shift = vdupq_n_s64(-(more & LIBDIVIDE_64_SHIFT_MASK));
             r.val[0] = vaddq_u64(vshrq_n_u64(vsubq_u64(numers.val[0], r.val[0]), 1), r.val[0]);
             r.val[1] = vaddq_u64(vshrq_n_u64(vsubq_u64(numers.val[1], r.val[1]), 1), r.val[1]);
-            r.val[0] = vshlq_u64(r.val[0], vdupq_n_s64(-(more & LIBDIVIDE_64_SHIFT_MASK)));
-            r.val[1] = vshlq_u64(r.val[1], vdupq_n_s64(-(more & LIBDIVIDE_64_SHIFT_MASK)));
+            r.val[0] = vshlq_u64(r.val[0], shift);
+            r.val[1] = vshlq_u64(r.val[1], shift);
         }
         else {
-            r.val[0] = vshlq_u64(r.val[0], vdupq_n_s64(-more));
-            r.val[1] = vshlq_u64(r.val[1], vdupq_n_s64(-more));
+            int64x2_t shift = vdupq_n_s64(-more);
+            r.val[0] = vshlq_u64(r.val[0], shift);
+            r.val[1] = vshlq_u64(r.val[1], shift);
         }
     }
     return r;
@@ -1311,22 +1319,25 @@ int32x4x2_t libdivide_s32_do_vector(int32x4x2_t numers, const struct libdivide_s
         int32x4_t roundToZeroTweak = vdupq_n_s32((1 << shifter) - 1);
         r.val[0] = vaddq_s32(numers.val[0], vandq_s32(vshrq_n_s32(numers.val[0], 31), roundToZeroTweak)); //q = numer + ((numer >> 31) & roundToZeroTweak);
         r.val[1] = vaddq_s32(numers.val[1], vandq_s32(vshrq_n_s32(numers.val[1], 31), roundToZeroTweak)); //q = numer + ((numer >> 31) & roundToZeroTweak);
-        r.val[0] = vshlq_s32(r.val[0], vdupq_n_s32(-shifter)); // q = q >> shifter
-        r.val[1] = vshlq_s32(r.val[1], vdupq_n_s32(-shifter)); // q = q >> shifter
+        int32x4_t shift = vdupq_n_s32(-shifter);
+        r.val[0] = vshlq_s32(r.val[0], shift); // q = q >> shifter
+        r.val[1] = vshlq_s32(r.val[1], shift); // q = q >> shifter
         int32x4_t shiftMask = vdupq_n_s32((int32_t)((int8_t)more >> 7)); //set all bits of shift mask = to the sign bit of more
         r.val[0] = vsubq_s32(veorq_s32(r.val[0], shiftMask), shiftMask); //q = (q ^ shiftMask) - shiftMask;
         r.val[1] = vsubq_s32(veorq_s32(r.val[1], shiftMask), shiftMask); //q = (q ^ shiftMask) - shiftMask;
     }
     else {
-        r.val[0] = libdivide_mullhi_s32_flat_vector(numers.val[0], vdupq_n_s32(denom->magic));
-        r.val[1] = libdivide_mullhi_s32_flat_vector(numers.val[1], vdupq_n_s32(denom->magic));
+        int32x4_t magic = vdupq_n_s32(denom->magic);
+        r.val[0] = libdivide_mullhi_s32_flat_vector(numers.val[0], magic);
+        r.val[1] = libdivide_mullhi_s32_flat_vector(numers.val[1], magic);
         if (more & LIBDIVIDE_ADD_MARKER) {
             int32x4_t sign = vdupq_n_s32((int32_t)(int8_t)more >> 7); //must be arithmetic shift
             r.val[0] = vaddq_s32(r.val[0], vsubq_s32(veorq_s32(numers.val[0], sign), sign)); // q += ((numer ^ sign) - sign);
             r.val[1] = vaddq_s32(r.val[1], vsubq_s32(veorq_s32(numers.val[1], sign), sign)); // q += ((numer ^ sign) - sign);
         }
-        r.val[0] = vshlq_s32(r.val[0], vdupq_n_s32(-(more & LIBDIVIDE_32_SHIFT_MASK))); //q >>= shift
-        r.val[1] = vshlq_s32(r.val[1], vdupq_n_s32(-(more & LIBDIVIDE_32_SHIFT_MASK))); //q >>= shift
+        int32x4_t shift = vdupq_n_s32(-(more & LIBDIVIDE_32_SHIFT_MASK));
+        r.val[0] = vshlq_s32(r.val[0], shift); //q >>= shift
+        r.val[1] = vshlq_s32(r.val[1], shift); //q >>= shift
         r.val[0] = vaddq_s32(r.val[0], vreinterpretq_s32_u32(vshrq_n_u32(vreinterpretq_u32_s32(r.val[0]), 31))); // q += (q < 0)
         r.val[1] = vaddq_s32(r.val[1], vreinterpretq_s32_u32(vshrq_n_u32(vreinterpretq_u32_s32(r.val[1]), 31))); // q += (q < 0)
     }
@@ -1654,27 +1665,29 @@ int64x2_t libdivide_s64_do_vector(int64x2_t numers, const struct libdivide_s64_t
 int64x2x2_t libdivide_s64_do_vector(int64x2x2_t numers, const struct libdivide_s64_t * denom) {
     int64x2x2_t r;
     uint8_t more = denom->more;
-    int64_t magic = denom->magic;
-    if (magic == 0) { //shift path
+    if (denom->magic == 0) { //shift path
         uint32_t shifter = more & LIBDIVIDE_64_SHIFT_MASK;
         int64x2_t roundToZeroTweak = vdupq_n_s64((1LL << shifter) - 1);
         r.val[0] = vaddq_s64(numers.val[0], vandq_s64(vshrq_n_s64(numers.val[0],63), roundToZeroTweak)); //q = numer + ((numer >> 63) & roundToZeroTweak);
         r.val[1] = vaddq_s64(numers.val[1], vandq_s64(vshrq_n_s64(numers.val[1],63), roundToZeroTweak)); //q = numer + ((numer >> 63) & roundToZeroTweak);
-        r.val[0] = vshlq_s64(r.val[0], vdupq_n_s64(-((int32_t)shifter))); // q = q >> shifter
-        r.val[1] = vshlq_s64(r.val[1], vdupq_n_s64(-((int32_t)shifter))); // q = q >> shifter
+        int64x2_t shift = vdupq_n_s64(-((int32_t)shifter));
+        r.val[0] = vshlq_s64(r.val[0], shift); // q = q >> shifter
+        r.val[1] = vshlq_s64(r.val[1], shift); // q = q >> shifter
         int64x2_t shiftMask = vdupq_n_s64((int32_t)((int8_t)more >> 7));
         r.val[0] = vsubq_s64(veorq_s64(r.val[0], shiftMask), shiftMask); //q = (q ^ shiftMask) - shiftMask;
         r.val[1] = vsubq_s64(veorq_s64(r.val[1], shiftMask), shiftMask); //q = (q ^ shiftMask) - shiftMask;
     } else {
-        r.val[0] = libdivide_mullhi_s64_flat_vector(numers.val[0], vdupq_n_s64(magic));
-        r.val[1] = libdivide_mullhi_s64_flat_vector(numers.val[1], vdupq_n_s64(magic));
+        int64x2_t magic = vdupq_n_s64(denom->magic);
+        r.val[0] = libdivide_mullhi_s64_flat_vector(numers.val[0], magic);
+        r.val[1] = libdivide_mullhi_s64_flat_vector(numers.val[1], magic);
         if (more & LIBDIVIDE_ADD_MARKER) {
             int64x2_t sign = vdupq_n_s64((int32_t)((int8_t)more >> 7)); //must be arithmetic shift
             r.val[0] = vaddq_s64(r.val[0], vsubq_s64(veorq_s64(numers.val[0], sign), sign)); // q += ((numer ^ sign) - sign);
             r.val[1] = vaddq_s64(r.val[1], vsubq_s64(veorq_s64(numers.val[1], sign), sign)); // q += ((numer ^ sign) - sign);
         }
-        r.val[0] = vshlq_s64(r.val[0], vdupq_n_s64(-(more & LIBDIVIDE_64_SHIFT_MASK))); //q >>= denom->mult_path.shift
-        r.val[1] = vshlq_s64(r.val[1], vdupq_n_s64(-(more & LIBDIVIDE_64_SHIFT_MASK))); //q >>= denom->mult_path.shift
+        int64x2_t shift = vdupq_n_s64(-(more & LIBDIVIDE_64_SHIFT_MASK));
+        r.val[0] = vshlq_s64(r.val[0], shift); //q >>= denom->mult_path.shift
+        r.val[1] = vshlq_s64(r.val[1], shift); //q >>= denom->mult_path.shift
         r.val[0] = vaddq_s64(r.val[0], vreinterpretq_s64_u64(vshrq_n_u64(vreinterpretq_u64_s64(r.val[0]), 63))); // q += (q < 0)
         r.val[1] = vaddq_s64(r.val[1], vreinterpretq_s64_u64(vshrq_n_u64(vreinterpretq_u64_s64(r.val[1]), 63))); // q += (q < 0)
     }
