@@ -12,7 +12,6 @@
 #include <emmintrin.h>
 #endif
 
-
 #if defined(_WIN32) || defined(WIN32)
 /* Windows makes you do a lot to stop it from "helping" */
 #define NOMINMAX
@@ -24,6 +23,14 @@
 #elif !defined(LIBDIVIDE_DISABLE_PTHREAD)
 /* Linux or Mac OS X or other Unix */
 #include <pthread.h>
+#endif
+
+#if defined(LIBDIVIDE_USE_SSE2)
+#define TEST_VEC128
+#elif defined(LIBDIVIDE_USE_NEON)
+//#define TEST_VEC64
+#define TEST_VEC128
+//#define TEST_VEC256
 #endif
 
 using namespace std;
@@ -45,8 +52,14 @@ protected:
 };
 
 template<typename T
-#if defined(LIBDIVIDE_USE_SSE2) || defined(LIBDIVIDE_USE_NEON)
-    , typename V
+#if defined(TEST_VEC64)
+    , typename V64
+#endif
+#if defined(TEST_VEC128)
+    , typename V128
+#endif
+#if defined(TEST_VEC256)
+    , typename V256
 #endif
 >
 class DivideTest : private DivideTest_PRNG {
@@ -106,20 +119,70 @@ private:
         else {
 //            cout << "Unswitched Success for " << numer << " / " << denom << " = " << actual2 << endl;
         }
-
-
     }
-#if defined(LIBDIVIDE_USE_SSE2) || defined(LIBDIVIDE_USE_NEON)
-    void test_vec(const T *numers, T denom, const divider<T> & the_divider) {
-        enum { NumElements = sizeof(V)/sizeof(T) };
+#if defined(TEST_VEC64)
+    void test_vec64(const T *numers, T denom, const divider<T> & the_divider) {
+        enum { NumElements = sizeof(V64)/sizeof(T) };
+#if LIBDIVIDE_VC
+        _declspec(align(8)) T results[NumElements];
+#else
+        T __attribute__ ((aligned)) results[NumElements];
+#endif
+        V64 numerVector; memcpy(&numerVector, numers, sizeof(V64));
+        V64 resultVector = numerVector / the_divider;
+        *(V64*)results = resultVector;
+        int i;
+        for (i=0; i < NumElements; i++) {
+            T numer = numers[i];
+            T actual = results[i];
+            T expect = numer / denom;
+            if (actual != expect) {
+                cout << "Vector failure for " << (typeid(T).name()) << ": " <<  numer << " / " << denom << " expected " << expect << " actual " << actual << endl;
+                while (1) ;
+            }
+            else {
+                //cout << "Vector success for " << numer << " / " << denom << " = " << actual << " (" << i << ")" << endl;
+            }
+        }
+    }
+#endif
+#if defined(TEST_VEC128)
+    void test_vec128(const T *numers, T denom, const divider<T> & the_divider) {
+        enum { NumElements = sizeof(V128)/sizeof(T) };
 #if LIBDIVIDE_VC
         _declspec(align(16)) T results[NumElements];
 #else
         T __attribute__ ((aligned)) results[NumElements];
 #endif
-        V numerVector; memcpy(&numerVector, numers, sizeof(V));
-        V resultVector = numerVector / the_divider;
-        *(V*)results = resultVector;
+        V128 numerVector; memcpy(&numerVector, numers, sizeof(V128));
+        V128 resultVector = numerVector / the_divider;
+        *(V128*)results = resultVector;
+        int i;
+        for (i=0; i < NumElements; i++) {
+            T numer = numers[i];
+            T actual = results[i];
+            T expect = numer / denom;
+            if (actual != expect) {
+                cout << "Vector failure for " << (typeid(T).name()) << ": " <<  numer << " / " << denom << " expected " << expect << " actual " << actual << endl;
+                while (1) ;
+            }
+            else {
+                //cout << "Vector success for " << numer << " / " << denom << " = " << actual << " (" << i << ")" << endl;
+            }
+        }
+    }
+#endif
+#if defined(TEST_VEC256)
+    void test_vec256(const T *numers, T denom, const divider<T> & the_divider) {
+        enum { NumElements = sizeof(V256)/sizeof(T) };
+#if LIBDIVIDE_VC
+        _declspec(align(32)) T results[NumElements];
+#else
+        T __attribute__ ((aligned)) results[NumElements];
+#endif
+        V256 numerVector; memcpy(&numerVector, numers, sizeof(V256));
+        V256 resultVector = numerVector / the_divider;
+        *(V256*)results = resultVector;
         int i;
         for (i=0; i < NumElements; i++) {
             T numer = numers[i];
@@ -144,8 +207,14 @@ private:
             test_one(numers[1], denom, the_divider);
             test_one(numers[2], denom, the_divider);
             test_one(numers[3], denom, the_divider);
-#if defined(LIBDIVIDE_USE_SSE2) || defined(LIBDIVIDE_USE_NEON)
-            test_vec(numers, denom, the_divider);
+#if defined(TEST_VEC64)
+            test_vec64(numers, denom, the_divider);
+#endif
+#if defined(TEST_VEC128)
+            test_vec128(numers, denom, the_divider);
+#endif
+#if defined(TEST_VEC256)
+            test_vec256(numers, denom, the_divider);
 #endif
         }
         const T min = std::numeric_limits<T>::min(), max = std::numeric_limits<T>::max();
