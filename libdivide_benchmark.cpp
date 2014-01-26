@@ -749,7 +749,7 @@ NOINLINE static uint64_t mine_1s64_vector(struct FunctionParams_t *params) {
     unsigned iter;
     int64x1_t sumX = vdup_n_s64(0);
     for (iter = 0; iter < ITERATIONS; iter+=1) {
-        int64x1_t numers = *((const int64x2_t*)(data + iter));
+        int64x1_t numers = *((const int64x1_t*)(data + iter));
         sumX = vadd_s64(sumX, libdivide_s64_do_vector(numers, &denom));
     }
     const int64_t *comps = (const int64_t *)&sumX;
