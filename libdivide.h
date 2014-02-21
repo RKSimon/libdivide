@@ -521,7 +521,7 @@ static inline int64x2_t libdivide_mullhi_2s64_flat_vector(int64x2_t x, int64x2_t
     int32x2_t y1 = vmovn_s64( vshrq_n_s64( y, 32 ) );
     int64x2_t x0y0_hi = vreinterpretq_s64_u64( vshrq_n_u64( vmull_u32( vreinterpret_u32_s32(x0), vreinterpret_u32_s32(y0) ), 32 ) );
     int64x2_t t = vmlal_s32( x0y0_hi, x1, y0 );
-    int64x2_t w1 = vmlal_s32( vmovl_s32( vmovn_s32(t) ), x0, y1 );
+    int64x2_t w1 = vmlal_s32( vmovl_s32( vmovn_s64(t) ), x0, y1 );
     return vmlal_s32( vaddq_s64( vshrq_n_s64( t, 32 ), vshrq_n_s64( w1, 32 ) ), x1, y1 );
 }
 
