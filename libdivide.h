@@ -1883,9 +1883,9 @@ int64x2x2_t libdivide_4s64_do_vector_alg4(int64x2x2_t numers, const struct libdi
 namespace libdivide_internal {
 
 #if LIBDIVIDE_USE_SSE2
-#define MAYBE_VECTOR64(x)  0
+#define MAYBE_VECTOR64(x)  crash_divide
 #define MAYBE_VECTOR128(x) x
-#define MAYBE_VECTOR256(x) 0
+#define MAYBE_VECTOR256(x) crash_divide
 #define MAYBE_VECTOR_2S32_PARAM int
 #define MAYBE_VECTOR_4S32_PARAM __m128i
 #define MAYBE_VECTOR_8S32_PARAM int
@@ -1915,9 +1915,9 @@ namespace libdivide_internal {
 #define MAYBE_VECTOR_2U64_PARAM uint64x2_t
 #define MAYBE_VECTOR_4U64_PARAM uint64x2x2_t
 #else
-#define MAYBE_VECTOR64(x)  0
-#define MAYBE_VECTOR128(x) 0
-#define MAYBE_VECTOR256(x) 0
+#define MAYBE_VECTOR64(x)  crash_divide
+#define MAYBE_VECTOR128(x) crash_divide
+#define MAYBE_VECTOR256(x) crash_divide
 #define MAYBE_VECTOR_2S32_PARAM int
 #define MAYBE_VECTOR_4S32_PARAM int
 #define MAYBE_VECTOR_8S32_PARAM int
@@ -1933,14 +1933,8 @@ namespace libdivide_internal {
 #endif
 
     /* Some bogus unswitch functions for unsigned types so the same (presumably templated) code can work for both signed and unsigned. */
-    uint32_t crash_u32(uint32_t, const libdivide_u32_t*) { abort(); return *(uint32_t*)NULL; }
-    uint64_t crash_u64(uint64_t, const libdivide_u64_t*) { abort(); return *(uint64_t*)NULL; }
-#if LIBDIVIDE_USE_SSE2 || LIBDIVIDE_USE_NEON
-    template <typename T>
-    T crash_u32_vector(T, const libdivide_u32_t*) { abort(); return *(T*)NULL; }
-    template <typename T>
-    T crash_u64_vector(T, const libdivide_u64_t*) { abort(); return *(T*)NULL; }
-#endif
+    template <typename T, typename U>
+    T crash_divide(T, const U*) { abort(); return *(T*)NULL; }
 
     template<typename IntType, typename Vec64Type, typename Vec128Type, typename Vec256Type, typename DenomType, DenomType gen_func(IntType), int get_algo(const DenomType *), IntType do_func(IntType, const DenomType *), Vec64Type vector64_func(Vec64Type, const DenomType *), Vec128Type vector128_func(Vec128Type, const DenomType *), Vec256Type vector256_func(Vec256Type, const DenomType *)>
     class divider_base {
@@ -1990,8 +1984,8 @@ namespace libdivide_internal {
         template<int J> struct algo<2, J>  { typedef denom<libdivide_u32_do_alg2, MAYBE_VECTOR64(libdivide_2u32_do_vector_alg2), MAYBE_VECTOR128(libdivide_4u32_do_vector_alg2), MAYBE_VECTOR256(libdivide_8u32_do_vector_alg2)>::divider divider; };
 
         /* Define two more bogus ones so that the same (templated, presumably) code can handle both signed and unsigned */
-        template<int J> struct algo<3, J>  { typedef denom<crash_u32, MAYBE_VECTOR64(crash_u32_vector), MAYBE_VECTOR128(crash_u32_vector), MAYBE_VECTOR256(crash_u32_vector)>::divider divider; };
-        template<int J> struct algo<4, J>  { typedef denom<crash_u32, MAYBE_VECTOR64(crash_u32_vector), MAYBE_VECTOR128(crash_u32_vector), MAYBE_VECTOR256(crash_u32_vector)>::divider divider; };
+        template<int J> struct algo<3, J>  { typedef denom<crash_divide, MAYBE_VECTOR64(crash_divide), MAYBE_VECTOR128(crash_divide), MAYBE_VECTOR256(crash_divide)>::divider divider; };
+        template<int J> struct algo<4, J>  { typedef denom<crash_divide, MAYBE_VECTOR64(crash_divide), MAYBE_VECTOR128(crash_divide), MAYBE_VECTOR256(crash_divide)>::divider divider; };
     };
 
     template<> struct divider_mid<int32_t> {
@@ -2032,8 +2026,8 @@ namespace libdivide_internal {
         template<int J> struct algo<2, J>  { typedef denom<libdivide_u64_do_alg2, MAYBE_VECTOR64(libdivide_1u64_do_vector_alg2), MAYBE_VECTOR128(libdivide_2u64_do_vector_alg2), MAYBE_VECTOR256(libdivide_4u64_do_vector_alg2)>::divider divider; };
 
         /* Define two more bogus ones so that the same (templated, presumably) code can handle both signed and unsigned */
-        template<int J> struct algo<3, J>  { typedef denom<crash_u64, MAYBE_VECTOR64(crash_u64_vector), MAYBE_VECTOR128(crash_u64_vector), MAYBE_VECTOR256(crash_u64_vector)>::divider divider; };
-        template<int J> struct algo<4, J>  { typedef denom<crash_u64, MAYBE_VECTOR64(crash_u64_vector), MAYBE_VECTOR128(crash_u64_vector), MAYBE_VECTOR256(crash_u64_vector)>::divider divider; };
+        template<int J> struct algo<3, J>  { typedef denom<crash_divide, MAYBE_VECTOR64(crash_divide), MAYBE_VECTOR128(crash_divide), MAYBE_VECTOR256(crash_divide)>::divider divider; };
+        template<int J> struct algo<4, J>  { typedef denom<crash_divide, MAYBE_VECTOR64(crash_divide), MAYBE_VECTOR128(crash_divide), MAYBE_VECTOR256(crash_divide)>::divider divider; };
     };
 
     template<> struct divider_mid<int64_t> {
