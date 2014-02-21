@@ -27,7 +27,7 @@
 
 #if defined(LIBDIVIDE_USE_SSE2)
 #define TEST_VEC128
-#elif defined(LIBDIVIDE_USE_NEON)
+#elif defined(LIBDIVIDE_USE_NEON) //|| defined(LIBDIVIDE_USE_VECTOR)
 #define TEST_VEC64
 #define TEST_VEC128
 #define TEST_VEC256
