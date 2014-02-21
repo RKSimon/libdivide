@@ -205,6 +205,33 @@ NOINLINE static uint64_t mine_8u32_vector(struct FunctionParams_t *params) {
     return comps[0] + comps[1] + comps[2] + comps[3];
 }
 
+NOINLINE static uint64_t mine_2u32_vector_unswitched(struct FunctionParams_t *params) {
+    unsigned iter;
+    const struct libdivide_u32_t denom = *(struct libdivide_u32_t *)params->denomPtr;
+    const uint32_t *data = (const uint32_t *)params->data;
+    uint32x2_t sumX = vdup_n_u32(0);
+    int algo = libdivide_u32_get_algorithm(&denom);
+    if (algo == 0) {
+        for (iter = 0; iter < ITERATIONS; iter+=2) {
+            uint32x2_t numers = *((const uint32x2_t*)(data + iter));
+            sumX = vadd_u32(sumX, libdivide_2u32_do_vector_alg0(numers, &denom));
+        }
+    }
+    else if (algo == 1) {
+        for (iter = 0; iter < ITERATIONS; iter+=2) {
+            uint32x2_t numers = *((const uint32x2_t*)(data + iter));
+            sumX = vadd_u32(sumX, libdivide_2u32_do_vector_alg1(numers, &denom));
+        }
+    }
+    else if (algo == 2) {
+        for (iter = 0; iter < ITERATIONS; iter+=2) {
+            uint32x2_t numers = *((const uint32x2_t*)(data + iter));
+            sumX = vadd_u32(sumX, libdivide_2u32_do_vector_alg2(numers, &denom));
+        }
+    }
+    const uint32_t *comps = (const uint32_t *)&sumX;
+    return comps[0] + comps[1];
+}
 NOINLINE static uint64_t mine_4u32_vector_unswitched(struct FunctionParams_t *params) {
     unsigned iter;
     const struct libdivide_u32_t denom = *(struct libdivide_u32_t *)params->denomPtr;
@@ -227,6 +254,39 @@ NOINLINE static uint64_t mine_4u32_vector_unswitched(struct FunctionParams_t *pa
         for (iter = 0; iter < ITERATIONS; iter+=4) {
             uint32x4_t numers = *((const uint32x4_t*)(data + iter));
             sumX = vaddq_u32(sumX, libdivide_4u32_do_vector_alg2(numers, &denom));
+        }
+    }
+    const uint32_t *comps = (const uint32_t *)&sumX;
+    return comps[0] + comps[1] + comps[2] + comps[3];
+}
+NOINLINE static uint64_t mine_8u32_vector_unswitched(struct FunctionParams_t *params) {
+    unsigned iter;
+    const struct libdivide_u32_t denom = *(struct libdivide_u32_t *)params->denomPtr;
+    const uint32_t *data = (const uint32_t *)params->data;
+    uint32x4_t sumX = vdupq_n_u32(0);
+    int algo = libdivide_u32_get_algorithm(&denom);
+    if (algo == 0) {
+        for (iter = 0; iter < ITERATIONS; iter+=8) {
+            uint32x4x2_t numers = *((const uint32x4x2_t*)(data + iter));
+            uint32x4x2_t result = libdivide_8u32_do_vector_alg0(numers, &denom);
+            sumX = vaddq_u32(sumX, result.val[0]);
+            sumX = vaddq_u32(sumX, result.val[1]);
+        }
+    }
+    else if (algo == 1) {
+        for (iter = 0; iter < ITERATIONS; iter+=8) {
+            uint32x4x2_t numers = *((const uint32x4x2_t*)(data + iter));
+            uint32x4x2_t result = libdivide_8u32_do_vector_alg1(numers, &denom);
+            sumX = vaddq_u32(sumX, result.val[0]);
+            sumX = vaddq_u32(sumX, result.val[1]);
+        }
+    }
+    else if (algo == 2) {
+        for (iter = 0; iter < ITERATIONS; iter+=8) {
+            uint32x4x2_t numers = *((const uint32x4x2_t*)(data + iter));
+            uint32x4x2_t result = libdivide_8u32_do_vector_alg2(numers, &denom);
+            sumX = vaddq_u32(sumX, result.val[0]);
+            sumX = vaddq_u32(sumX, result.val[1]);
         }
     }
     const uint32_t *comps = (const uint32_t *)&sumX;
@@ -396,6 +456,46 @@ NOINLINE static uint64_t mine_8s32_vector(struct FunctionParams_t *params) {
     return sum;
 }
 
+NOINLINE static uint64_t mine_2s32_vector_unswitched(struct FunctionParams_t *params) {
+    unsigned iter;
+    int32x2_t sumX = vdup_n_s32(0);
+    const struct libdivide_s32_t denom = *(struct libdivide_s32_t *)params->denomPtr;
+    const int32_t *data = (const int32_t *)params->data;
+    int algo = libdivide_s32_get_algorithm(&denom);
+    if (algo == 0) {
+        for (iter = 0; iter < ITERATIONS; iter+=2) {
+            int32x2_t numers = *((const int32x2_t*)(data + iter));
+            sumX = vadd_s32(sumX, libdivide_2s32_do_vector_alg0(numers, &denom));
+        }
+    }
+    else if (algo == 1) {
+        for (iter = 0; iter < ITERATIONS; iter+=2) {
+            int32x2_t numers = *((const int32x2_t*)(data + iter));
+            sumX = vadd_s32(sumX, libdivide_2s32_do_vector_alg1(numers, &denom));
+        }
+    }
+    else if (algo == 2) {
+        for (iter = 0; iter < ITERATIONS; iter+=2) {
+            int32x2_t numers = *((const int32x2_t*)(data + iter));
+            sumX = vadd_s32(sumX, libdivide_2s32_do_vector_alg2(numers, &denom));
+        }
+    }
+    else if (algo == 3) {
+        for (iter = 0; iter < ITERATIONS; iter+=2) {
+            int32x2_t numers = *((const int32x2_t*)(data + iter));
+            sumX = vadd_s32(sumX, libdivide_2s32_do_vector_alg3(numers, &denom));
+        }
+    }
+    else if (algo == 4) {
+        for (iter = 0; iter < ITERATIONS; iter+=2) {
+            int32x2_t numers = *((const int32x2_t*)(data + iter));
+            sumX = vadd_s32(sumX, libdivide_2s32_do_vector_alg4(numers, &denom));
+        }
+    }
+    const int32_t *comps = (const int32_t *)&sumX;
+    int32_t sum = comps[0] + comps[1];
+    return sum;
+}
 NOINLINE static uint64_t mine_4s32_vector_unswitched(struct FunctionParams_t *params) {
     unsigned iter;
     int32x4_t sumX = vdupq_n_s32(0);
@@ -430,6 +530,56 @@ NOINLINE static uint64_t mine_4s32_vector_unswitched(struct FunctionParams_t *pa
         for (iter = 0; iter < ITERATIONS; iter+=4) {
             int32x4_t numers = *((const int32x4_t*)(data + iter));
             sumX = vaddq_s32(sumX, libdivide_4s32_do_vector_alg4(numers, &denom));
+        }
+    }
+    const int32_t *comps = (const int32_t *)&sumX;
+    int32_t sum = comps[0] + comps[1] + comps[2] + comps[3];
+    return sum;
+}
+NOINLINE static uint64_t mine_8s32_vector_unswitched(struct FunctionParams_t *params) {
+    unsigned iter;
+    int32x4_t sumX = vdupq_n_s32(0);
+    const struct libdivide_s32_t denom = *(struct libdivide_s32_t *)params->denomPtr;
+    const int32_t *data = (const int32_t *)params->data;
+    int algo = libdivide_s32_get_algorithm(&denom);
+    if (algo == 0) {
+        for (iter = 0; iter < ITERATIONS; iter+=8) {
+            int32x4x2_t numers = *((const int32x4x2_t*)(data + iter));
+            int32x4x2_t result = libdivide_8s32_do_vector_alg0(numers, &denom);
+            sumX = vaddq_s32(sumX, result.val[0]);
+            sumX = vaddq_s32(sumX, result.val[1]);
+        }
+    }
+    else if (algo == 1) {
+        for (iter = 0; iter < ITERATIONS; iter+=8) {
+            int32x4x2_t numers = *((const int32x4x2_t*)(data + iter));
+            int32x4x2_t result = libdivide_8s32_do_vector_alg1(numers, &denom);
+            sumX = vaddq_s32(sumX, result.val[0]);
+            sumX = vaddq_s32(sumX, result.val[1]);
+        }
+    }
+    else if (algo == 2) {
+        for (iter = 0; iter < ITERATIONS; iter+=8) {
+            int32x4x2_t numers = *((const int32x4x2_t*)(data + iter));
+            int32x4x2_t result = libdivide_8s32_do_vector_alg2(numers, &denom);
+            sumX = vaddq_s32(sumX, result.val[0]);
+            sumX = vaddq_s32(sumX, result.val[1]);
+        }
+    }
+    else if (algo == 3) {
+        for (iter = 0; iter < ITERATIONS; iter+=8) {
+            int32x4x2_t numers = *((const int32x4x2_t*)(data + iter));
+            int32x4x2_t result = libdivide_8s32_do_vector_alg3(numers, &denom);
+            sumX = vaddq_s32(sumX, result.val[0]);
+            sumX = vaddq_s32(sumX, result.val[1]);
+        }
+    }
+    else if (algo == 4) {
+        for (iter = 0; iter < ITERATIONS; iter+=8) {
+            int32x4x2_t numers = *((const int32x4x2_t*)(data + iter));
+            int32x4x2_t result = libdivide_8s32_do_vector_alg4(numers, &denom);
+            sumX = vaddq_s32(sumX, result.val[0]);
+            sumX = vaddq_s32(sumX, result.val[1]);
         }
     }
     const int32_t *comps = (const int32_t *)&sumX;
@@ -1145,9 +1295,9 @@ NOINLINE struct TestResult test_one_u32(uint32_t d, const uint32_t *data) {
     funcs.funcs[kVec128Test] = FUNC_VECTOR128(mine_4u32_vector);
     funcs.funcs[kVec256Test] = FUNC_VECTOR256(mine_8u32_vector);
     funcs.funcs[kUnswitchedBaseTest] = mine_u32_unswitched;
-    funcs.funcs[kUnswitchedVec64Test] = NULL;
+    funcs.funcs[kUnswitchedVec64Test] = FUNC_VECTOR128(mine_2u32_vector_unswitched);
     funcs.funcs[kUnswitchedVec128Test] = FUNC_VECTOR128(mine_4u32_vector_unswitched);
-    funcs.funcs[kUnswitchedVec256Test] = NULL;
+    funcs.funcs[kUnswitchedVec256Test] = FUNC_VECTOR256(mine_8u32_vector_unswitched);
     funcs.his = his_u32;
     funcs.generate = mine_u32_generate;
 
@@ -1169,9 +1319,9 @@ NOINLINE struct TestResult test_one_s32(int32_t d, const int32_t *data) {
     funcs.funcs[kVec128Test] = FUNC_VECTOR128(mine_4s32_vector);
     funcs.funcs[kVec256Test] = FUNC_VECTOR256(mine_8s32_vector);
     funcs.funcs[kUnswitchedBaseTest] = mine_s32_unswitched;
-    funcs.funcs[kUnswitchedVec64Test] = NULL;
+    funcs.funcs[kUnswitchedVec64Test] = FUNC_VECTOR64(mine_2s32_vector_unswitched);
     funcs.funcs[kUnswitchedVec128Test] = FUNC_VECTOR128(mine_4s32_vector_unswitched);
-    funcs.funcs[kUnswitchedVec256Test] = NULL;
+    funcs.funcs[kUnswitchedVec256Test] = FUNC_VECTOR256(mine_8s32_vector_unswitched);
     funcs.his = his_s32;
     funcs.generate = mine_s32_generate;
 
