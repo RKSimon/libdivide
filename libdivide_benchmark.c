@@ -1380,20 +1380,20 @@ NOINLINE struct TestResult test_one_s64(int64_t d, const int64_t *data) {
 
 static void report_header(void) {
     unsigned test;
-    printf("%6s%8s", "#", "system");
+    printf("%6s%10s", "#", "system");
     for (test = 0; test < kNumTests; test++) {
-        printf("%8s", strTests[test]);
+        printf("%10s", strTests[test]);
     }
-    printf("%8s%6s\n", "gener", "algo");
+    printf("%10s%6s\n", "gener", "algo");
 }
 
 static void report_result(const char *input, struct TestResult result) {
     unsigned test;
-    printf("%6s%8.3f", input, result.his_time);
+    printf("%6s%10.3f", input, result.his_time);
     for (test = 0; test < kNumTests; test++) {
-        printf("%8.3f", result.times[test]);
+        printf("%10.3f", result.times[test]);
     }
-    printf("%8.3f%6d\n", result.gen_time, result.algo);
+    printf("%10.3f%6d\n", result.gen_time, result.algo);
 }
 
 static void test_many_u32(const uint32_t *data) {
