@@ -28,9 +28,9 @@
 #if defined(LIBDIVIDE_USE_SSE2)
 #define TEST_VEC128
 #elif defined(LIBDIVIDE_USE_NEON)
-//#define TEST_VEC64
+#define TEST_VEC64
 #define TEST_VEC128
-//#define TEST_VEC256
+#define TEST_VEC256
 #endif
 
 using namespace std;
@@ -259,7 +259,7 @@ static void *perform_test(void *ptr) {
 #if defined(LIBDIVIDE_USE_SSE2)
             , __m128i
 #elif defined(LIBDIVIDE_USE_NEON)
-            , int32x4_t
+            , int32x2_t, int32x4_t, int32x4x2_t
 #endif
             > dt;
             dt.run();
@@ -274,7 +274,7 @@ static void *perform_test(void *ptr) {
 #if defined(LIBDIVIDE_USE_SSE2)
             , __m128
 #elif defined(LIBDIVIDE_USE_NEON)
-            , uint32x4_t
+            , uint32x2_t, uint32x4_t, uint32x4x2_t
 #endif
             > dt;
             dt.run();
@@ -289,7 +289,7 @@ static void *perform_test(void *ptr) {
 #if defined(LIBDIVIDE_USE_SSE2)
             , __m128i
 #elif defined(LIBDIVIDE_USE_NEON)
-            , int64x2_t
+            , int64x1_t, int64x2_t, int64x2x2_t
 #endif
             > dt;
             dt.run();
@@ -304,7 +304,7 @@ static void *perform_test(void *ptr) {
 #if defined(LIBDIVIDE_USE_SSE2)
             , __m128i
 #elif defined(LIBDIVIDE_USE_NEON)
-            , uint64x2_t
+            , uint64x1_t, uint64x2_t, uint64x2x2_t
 #endif
             > dt;
             dt.run();
