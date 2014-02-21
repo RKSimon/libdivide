@@ -462,49 +462,49 @@ static inline __m128i libdivide_mullhi_s32_flat_vector(__m128i a, __m128i b) {
 }
 #endif
 #elif LIBDIVIDE_USE_NEON
-static inline int32x2_t libdivide_mullhi_2s32_flat_vector(int32x2_t a, int32x2_t b) {
-    int64x2_t r64 = vmull_s32( a, b );
+static inline int32x2_t libdivide_mullhi_2s32_flat_vector(int32x2_t x, int32x2_t y) {
+    int64x2_t r64 = vmull_s32( x, y );
     r64 = vreinterpretq_s64_u64( vshrq_n_u64( vreinterpretq_u64_s64(r64), 32 ) );
     int32x2_t r = vmovn_s64( r64 );
     return r;
 }
 
-static inline int32x4_t libdivide_mullhi_4s32_flat_vector(int32x4_t a, int32x4_t b) {
-    int64x2_t rlo = vmull_s32( vget_low_s32(a), vget_low_s32(b) );
-    int64x2_t rhi = vmull_s32( vget_high_s32(a), vget_high_s32(b) );
+static inline int32x4_t libdivide_mullhi_4s32_flat_vector(int32x4_t x, int32x4_t y) {
+    int64x2_t rlo = vmull_s32( vget_low_s32(x), vget_low_s32(y) );
+    int64x2_t rhi = vmull_s32( vget_high_s32(x), vget_high_s32(y) );
     rlo = vreinterpretq_s64_u64( vshrq_n_u64( vreinterpretq_u64_s64(rlo), 32 ) );
     rhi = vreinterpretq_s64_u64( vshrq_n_u64( vreinterpretq_u64_s64(rhi), 32 ) );
     int32x4_t r = vcombine_s32( vmovn_s64( rlo ), vmovn_s64( rhi ) );
     return r;
 }
 
-static inline int32x4x2_t libdivide_mullhi_8s32_flat_vector(int32x4x2_t a, int32x4x2_t b) {
+static inline int32x4x2_t libdivide_mullhi_8s32_flat_vector(int32x4x2_t x, int32x4x2_t y) {
     int32x4x2_t r;
-    r.val[0] = libdivide_mullhi_4s32_flat_vector( a.val[0], b.val[0] );
-    r.val[1] = libdivide_mullhi_4s32_flat_vector( a.val[1], b.val[1] );
+    r.val[0] = libdivide_mullhi_4s32_flat_vector( x.val[0], y.val[0] );
+    r.val[1] = libdivide_mullhi_4s32_flat_vector( x.val[1], y.val[1] );
     return r;
 }
 
-static inline uint32x2_t libdivide_mullhi_2u32_flat_vector(uint32x2_t a, uint32x2_t b) {
-    uint64x2_t r64 = vmull_u32( a, b );
+static inline uint32x2_t libdivide_mullhi_2u32_flat_vector(uint32x2_t x, uint32x2_t y) {
+    uint64x2_t r64 = vmull_u32( x, y );
     r64 = vshrq_n_u64( r64, 32 );
     uint32x2_t r = vmovn_u64( r64 );
     return r;
 }
 
-static inline uint32x4_t libdivide_mullhi_4u32_flat_vector(uint32x4_t a, uint32x4_t b) {
-    uint64x2_t rlo = vmull_u32( vget_low_u32(a), vget_low_u32(b) );
-    uint64x2_t rhi = vmull_u32( vget_high_u32(a), vget_high_u32(b) );
+static inline uint32x4_t libdivide_mullhi_4u32_flat_vector(uint32x4_t x, uint32x4_t y) {
+    uint64x2_t rlo = vmull_u32( vget_low_u32(x), vget_low_u32(y) );
+    uint64x2_t rhi = vmull_u32( vget_high_u32(x), vget_high_u32(y) );
     rlo = vshrq_n_u64( rlo, 32 );
     rhi = vshrq_n_u64( rhi, 32 );
     uint32x4_t r = vcombine_u32( vmovn_u64( rlo ), vmovn_u64( rhi ) );
     return r;
 }
 
-static inline uint32x4x2_t libdivide_mullhi_8u32_flat_vector(uint32x4x2_t a, uint32x4x2_t b) {
+static inline uint32x4x2_t libdivide_mullhi_8u32_flat_vector(uint32x4x2_t x, uint32x4x2_t y) {
     uint32x4x2_t r;
-    r.val[0] = libdivide_mullhi_4u32_flat_vector( a.val[0], b.val[0] );
-    r.val[1] = libdivide_mullhi_4u32_flat_vector( a.val[1], b.val[1] );
+    r.val[0] = libdivide_mullhi_4u32_flat_vector( x.val[0], y.val[0] );
+    r.val[1] = libdivide_mullhi_4u32_flat_vector( x.val[1], y.val[1] );
     return r;
 }
 
@@ -532,35 +532,42 @@ static inline int64x2_t libdivide_mullhi_2s64_flat_vector(int64x2_t x, int64x2_t
 #endif
 }
 
-static inline int64x2x2_t libdivide_mullhi_4s64_flat_vector(int64x2x2_t a, int64x2x2_t b) {
+static inline int64x2x2_t libdivide_mullhi_4s64_flat_vector(int64x2x2_t x, int64x2x2_t y) {
     int64x2x2_t r;
-    r.val[0] = libdivide_mullhi_2s64_flat_vector( a.val[0], b.val[0] );
-    r.val[1] = libdivide_mullhi_2s64_flat_vector( a.val[1], b.val[1] );
+    r.val[0] = libdivide_mullhi_2s64_flat_vector( x.val[0], y.val[0] );
+    r.val[1] = libdivide_mullhi_2s64_flat_vector( x.val[1], y.val[1] );
     return r;
 }
 
 static inline uint64x1_t libdivide_mullhi_1u64_flat_vector(uint64x1_t x, uint64x1_t y) {
-    uint64x1_t r = vdup_n_u64(0);
-    r = vset_lane_u64( libdivide__mullhi_u64( vget_lane_u64(x,0), vget_lane_u64(y,0) ), r, 0 );
-    return r;
+    uint64x2_t xy = vcombine_u64( x, y );
+    uint32x2_t x0y0 = vmovn_u64( xy );
+    uint32x2_t x1y1 = vmovn_u64( vshrq_n_u64( xy, 32 ) );
+    uint32x2_t y0x0 = vrev64_u32( x0y0 );
+    uint32x2_t y1x1 = vrev64_u32( x1y1 );
+    uint64x2_t x0y0_hi = vshrq_n_u64( vmull_u32( x0y0, y0x0 ), 32 );
+    uint64x2_t temp = vmlal_u32( x0y0_hi, x1y1, y0x0 );
+    uint64x2_t temp_lo = vshrq_n_u64( vshlq_n_u64( temp, 32 ), 32 );
+    uint64x2_t temp_hi = vshrq_n_u64( temp, 32 );
+    return vadd_u64( vget_low_u64( vmlal_u32( temp_hi, x1y1, y1x1 ) ), vshr_n_u64( vget_low_u64( vmlal_u32( temp_lo, x0y0, y1x1 ) ), 32 ) );
 }
 
 static inline uint64x2_t libdivide_mullhi_2u64_flat_vector(uint64x2_t x, uint64x2_t y) {
-	uint32x2_t x0 = vmovn_u64(x);
-	uint32x2_t y0 = vmovn_u64(y);
-	uint32x2_t x1 = vmovn_u64( vshrq_n_u64( x, 32 ) );
-	uint32x2_t y1 = vmovn_u64( vshrq_n_u64( y, 32 ) );
-	uint64x2_t x0y0_hi = vshrq_n_u64( vmull_u32( x0, y0 ), 32 );
-	uint64x2_t temp = vmlal_u32( x0y0_hi, x1, y0 );
+    uint32x2_t x0 = vmovn_u64(x);
+    uint32x2_t y0 = vmovn_u64(y);
+    uint32x2_t x1 = vmovn_u64( vshrq_n_u64( x, 32 ) );
+    uint32x2_t y1 = vmovn_u64( vshrq_n_u64( y, 32 ) );
+    uint64x2_t x0y0_hi = vshrq_n_u64( vmull_u32( x0, y0 ), 32 );
+    uint64x2_t temp = vmlal_u32( x0y0_hi, x1, y0 );
     uint64x2_t temp_lo = vshrq_n_u64( vshlq_n_u64( temp, 32 ), 32 );
-	uint64x2_t temp_hi = vshrq_n_u64( temp, 32 );
-	return vaddq_u64( vmlal_u32( temp_hi, x1, y1 ), vshrq_n_u64( vmlal_u32( temp_lo, x0, y1 ), 32 ) );
+    uint64x2_t temp_hi = vshrq_n_u64( temp, 32 );
+    return vaddq_u64( vmlal_u32( temp_hi, x1, y1 ), vshrq_n_u64( vmlal_u32( temp_lo, x0, y1 ), 32 ) );
 }
 
-static inline uint64x2x2_t libdivide_mullhi_4u64_flat_vector(uint64x2x2_t a, uint64x2x2_t b) {
+static inline uint64x2x2_t libdivide_mullhi_4u64_flat_vector(uint64x2x2_t x, uint64x2x2_t y) {
     uint64x2x2_t r;
-    r.val[0] = libdivide_mullhi_2u64_flat_vector( a.val[0], b.val[0] );
-    r.val[1] = libdivide_mullhi_2u64_flat_vector( a.val[1], b.val[1] );
+    r.val[0] = libdivide_mullhi_2u64_flat_vector( x.val[0], y.val[0] );
+    r.val[1] = libdivide_mullhi_2u64_flat_vector( x.val[1], y.val[1] );
     return r;
 }
 #endif
