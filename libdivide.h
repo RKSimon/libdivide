@@ -515,6 +515,12 @@ static inline int64x1_t libdivide_mullhi_1s64_flat_vector(int64x1_t x, int64x1_t
 }
 
 static inline int64x2_t libdivide_mullhi_2s64_flat_vector(int64x2_t x, int64x2_t y) {
+#if 1
+    int64x2_t r = vdupq_n_s64(0);
+    r = vsetq_lane_s64( libdivide__mullhi_s64( vgetq_lane_s64(x,0), vgetq_lane_s64(y,0) ), r, 0 );
+    r = vsetq_lane_s64( libdivide__mullhi_s64( vgetq_lane_s64(x,1), vgetq_lane_s64(y,1) ), r, 1 );
+    return r;
+#else
     int32x2_t x0 = vmovn_s64(x);
     int32x2_t y0 = vmovn_s64(y);
     int32x2_t x1 = vmovn_s64( vshrq_n_s64( x, 32 ) );
@@ -523,6 +529,7 @@ static inline int64x2_t libdivide_mullhi_2s64_flat_vector(int64x2_t x, int64x2_t
     int64x2_t t = vmlal_s32( x0y0_hi, x1, y0 );
     int64x2_t w1 = vmlal_s32( vmovl_s32( vmovn_s64(t) ), x0, y1 );
     return vmlal_s32( vaddq_s64( vshrq_n_s64( t, 32 ), vshrq_n_s64( w1, 32 ) ), x1, y1 );
+#endif
 }
 
 static inline int64x2x2_t libdivide_mullhi_4s64_flat_vector(int64x2x2_t a, int64x2x2_t b) {
