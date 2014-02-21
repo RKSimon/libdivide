@@ -624,6 +624,34 @@ NOINLINE static uint64_t mine_4u64_vector(struct FunctionParams_t *params) {
     return comps[0] + comps[1];
 }
 
+NOINLINE static uint64_t mine_1u64_vector_unswitched(struct FunctionParams_t *params) {
+    unsigned iter;
+    uint64x1_t sumX = vdup_n_u64(0);
+    const struct libdivide_u64_t denom = *(struct libdivide_u64_t *)params->denomPtr;
+    const uint64_t *data = (const uint64_t *)params->data;
+    int algo = libdivide_u64_get_algorithm(&denom);
+    if (algo == 0) {
+        for (iter = 0; iter < ITERATIONS; iter+=1) {
+            uint64x1_t numers = *((const uint64x1_t*)(data + iter));
+            sumX = vadd_u64(sumX, libdivide_1u64_do_vector_alg0(numers, &denom));
+        }
+    }
+    else if (algo == 1) {
+        for (iter = 0; iter < ITERATIONS; iter+=1) {
+            uint64x1_t numers = *((const uint64x1_t*)(data + iter));
+            sumX = vadd_u64(sumX, libdivide_1u64_do_vector_alg1(numers, &denom));
+        }
+    }
+    else if (algo == 2) {
+        for (iter = 0; iter < ITERATIONS; iter+=1) {
+            uint64x1_t numers = *((const uint64x1_t*)(data + iter));
+            sumX = vadd_u64(sumX, libdivide_1u64_do_vector_alg2(numers, &denom));
+        }
+    }
+    const uint64_t *comps = (const uint64_t *)&sumX;
+    return comps[0];
+}
+
 NOINLINE static uint64_t mine_2u64_vector_unswitched(struct FunctionParams_t *params) {
     unsigned iter;
     uint64x2_t sumX = vdupq_n_u64(0);
@@ -787,6 +815,48 @@ NOINLINE static uint64_t mine_4s64_vector(struct FunctionParams_t *params) {
     }
     const int64_t *comps = (const int64_t *)&sumX;
     int64_t sum = comps[0] + comps[1];
+    return sum;
+}
+
+NOINLINE static uint64_t mine_1s64_vector_unswitched(struct FunctionParams_t *params) {
+    const struct libdivide_s64_t denom = *(struct libdivide_s64_t *)params->denomPtr;
+    const int64_t *data = (const int64_t *)params->data;
+
+    unsigned iter;
+    int64x1_t sumX = vdup_n_s64(0);
+    int algo = libdivide_s64_get_algorithm(&denom);
+    if (algo == 0) {
+        for (iter = 0; iter < ITERATIONS; iter+=1) {
+            int64x1_t numers = *((const int64x1_t*)(data + iter));
+            sumX = vadd_s64(sumX, libdivide_1s64_do_vector_alg0(numers, &denom));
+        }
+    }
+    else if (algo == 1) {
+        for (iter = 0; iter < ITERATIONS; iter+=1) {
+            int64x1_t numers = *((const int64x1_t*)(data + iter));
+            sumX = vadd_s64(sumX, libdivide_1s64_do_vector_alg1(numers, &denom));
+        }
+    }
+    else if (algo == 2) {
+        for (iter = 0; iter < ITERATIONS; iter+=1) {
+            int64x1_t numers = *((const int64x1_t*)(data + iter));
+            sumX = vadd_s64(sumX, libdivide_1s64_do_vector_alg2(numers, &denom));
+        }
+    }
+    else if (algo == 3) {
+        for (iter = 0; iter < ITERATIONS; iter+=1) {
+            int64x1_t numers = *((const int64x1_t*)(data + iter));
+            sumX = vadd_s64(sumX, libdivide_1s64_do_vector_alg3(numers, &denom));
+        }
+    }
+    else if (algo == 4) {
+        for (iter = 0; iter < ITERATIONS; iter+=1) {
+            int64x1_t numers = *((const int64x1_t*)(data + iter));
+            sumX = vadd_s64(sumX, libdivide_1s64_do_vector_alg4(numers, &denom));
+        }
+    }
+    const int64_t *comps = (const int64_t *)&sumX;
+    int64_t sum = comps[0];
     return sum;
 }
 
@@ -1037,7 +1107,7 @@ NOINLINE struct TestResult test_one_u64(uint64_t d, const uint64_t *data) {
     funcs.funcs[kVec128Test] = FUNC_VECTOR128(mine_2u64_vector);
     funcs.funcs[kVec256Test] = FUNC_VECTOR256(mine_4u64_vector);
     funcs.funcs[kUnswitchedBaseTest] = mine_u64_unswitched;
-    funcs.funcs[kUnswitchedVec64Test] = NULL;
+    funcs.funcs[kUnswitchedVec64Test] = FUNC_VECTOR64(mine_1u64_vector_unswitched);
     funcs.funcs[kUnswitchedVec128Test] = FUNC_VECTOR128(mine_2u64_vector_unswitched);
     funcs.funcs[kUnswitchedVec256Test] = NULL;
     funcs.his = his_u64;
@@ -1061,7 +1131,7 @@ NOINLINE struct TestResult test_one_s64(int64_t d, const int64_t *data) {
     funcs.funcs[kVec128Test] = FUNC_VECTOR128(mine_2s64_vector);
     funcs.funcs[kVec256Test] = FUNC_VECTOR256(mine_4s64_vector);
     funcs.funcs[kUnswitchedBaseTest] = mine_s64_unswitched;
-    funcs.funcs[kUnswitchedVec64Test] = NULL;
+    funcs.funcs[kUnswitchedVec64Test] = FUNC_VECTOR64(mine_1s64_vector_unswitched);
     funcs.funcs[kUnswitchedVec128Test] = FUNC_VECTOR128(mine_2s64_vector_unswitched);
     funcs.funcs[kUnswitchedVec256Test] = NULL;
     funcs.his = his_s64;
