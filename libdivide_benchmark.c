@@ -1295,7 +1295,7 @@ NOINLINE struct TestResult test_one_u32(uint32_t d, const uint32_t *data) {
     funcs.funcs[kVec128Test] = FUNC_VECTOR128(mine_4u32_vector);
     funcs.funcs[kVec256Test] = FUNC_VECTOR256(mine_8u32_vector);
     funcs.funcs[kUnswitchedBaseTest] = mine_u32_unswitched;
-    funcs.funcs[kUnswitchedVec64Test] = FUNC_VECTOR128(mine_2u32_vector_unswitched);
+    funcs.funcs[kUnswitchedVec64Test] = FUNC_VECTOR64(mine_2u32_vector_unswitched);
     funcs.funcs[kUnswitchedVec128Test] = FUNC_VECTOR128(mine_4u32_vector_unswitched);
     funcs.funcs[kUnswitchedVec256Test] = FUNC_VECTOR256(mine_8u32_vector_unswitched);
     funcs.his = his_u32;
