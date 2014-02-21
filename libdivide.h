@@ -269,6 +269,7 @@ LIBDIVIDE_API int64x2x2_t libdivide_4s64_do_vector_alg3(int64x2x2_t numers, cons
 LIBDIVIDE_API   int64x1_t libdivide_1s64_do_vector_alg4(  int64x1_t numers, const struct libdivide_s64_t * denom);
 LIBDIVIDE_API   int64x2_t libdivide_2s64_do_vector_alg4(  int64x2_t numers, const struct libdivide_s64_t * denom);
 LIBDIVIDE_API int64x2x2_t libdivide_4s64_do_vector_alg4(int64x2x2_t numers, const struct libdivide_s64_t * denom);
+#endif
 
 #define libdivide_s32_do_vector libdivide_4s32_do_vector
 #define libdivide_s64_do_vector libdivide_2s64_do_vector
@@ -292,7 +293,6 @@ LIBDIVIDE_API int64x2x2_t libdivide_4s64_do_vector_alg4(int64x2x2_t numers, cons
 #define libdivide_u64_do_vector_alg0 libdivide_2u64_do_vector_alg0
 #define libdivide_u64_do_vector_alg1 libdivide_2u64_do_vector_alg1
 #define libdivide_u64_do_vector_alg2 libdivide_2u64_do_vector_alg2
-#endif
 
 //////// Internal Utility Functions
 
