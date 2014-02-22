@@ -109,8 +109,8 @@ uint32_t libdivide_sum_4u32(__m128i x) {
 	const uint32_t *comps = (const uint32_t*)&x;
 	return comps[0] + comps[1] + comps[2] + comps[3];
 }
-int32_t libdivide_sum_2s642(__m128i x) {
-	const int32_t *comps = (const int64_t*)&x;
+int32_t libdivide_sum_2s64(__m128i x) {
+	const int64_t *comps = (const int64_t*)&x;
 	return comps[0] + comps[1];
 }
 int32_t libdivide_sum_2u64(__m128i x) {
