@@ -25,14 +25,6 @@
 #include <pthread.h>
 #endif
 
-#if defined(LIBDIVIDE_USE_SSE2)
-#define TEST_VEC128
-#elif defined(LIBDIVIDE_USE_NEON) //|| defined(LIBDIVIDE_USE_VECTOR)
-#define TEST_VEC64
-#define TEST_VEC128
-#define TEST_VEC256
-#endif
-
 using namespace std;
 using namespace libdivide;
 
@@ -52,13 +44,13 @@ protected:
 };
 
 template<typename T
-#if defined(TEST_VEC64)
+#if defined(LIBDIVIDE_VEC64)
     , typename V64
 #endif
-#if defined(TEST_VEC128)
+#if defined(LIBDIVIDE_VEC128)
     , typename V128
 #endif
-#if defined(TEST_VEC256)
+#if defined(LIBDIVIDE_VEC256)
     , typename V256
 #endif
 >
@@ -120,7 +112,7 @@ private:
 //            cout << "Unswitched Success for " << numer << " / " << denom << " = " << actual2 << endl;
         }
     }
-#if defined(TEST_VEC64)
+#if defined(LIBDIVIDE_VEC64)
     void test_vec64(const T *numers, T denom, const divider<T> & the_divider) {
         enum { NumElements = sizeof(V64)/sizeof(T) };
 #if LIBDIVIDE_VC
@@ -146,7 +138,7 @@ private:
         }
     }
 #endif
-#if defined(TEST_VEC128)
+#if defined(LIBDIVIDE_VEC128)
     void test_vec128(const T *numers, T denom, const divider<T> & the_divider) {
         enum { NumElements = sizeof(V128)/sizeof(T) };
 #if LIBDIVIDE_VC
@@ -172,7 +164,7 @@ private:
         }
     }
 #endif
-#if defined(TEST_VEC256)
+#if defined(LIBDIVIDE_VEC256)
     void test_vec256(const T *numers, T denom, const divider<T> & the_divider) {
         enum { NumElements = sizeof(V256)/sizeof(T) };
 #if LIBDIVIDE_VC
@@ -207,13 +199,13 @@ private:
             test_one(numers[1], denom, the_divider);
             test_one(numers[2], denom, the_divider);
             test_one(numers[3], denom, the_divider);
-#if defined(TEST_VEC64)
+#if defined(LIBDIVIDE_VEC64)
             test_vec64(numers, denom, the_divider);
 #endif
-#if defined(TEST_VEC128)
+#if defined(LIBDIVIDE_VEC128)
             test_vec128(numers, denom, the_divider);
 #endif
-#if defined(TEST_VEC256)
+#if defined(LIBDIVIDE_VEC256)
             test_vec256(numers, denom, the_divider);
 #endif
         }
@@ -256,10 +248,14 @@ static void *perform_test(void *ptr) {
             if (! sRunS32) break;
             puts("Starting int32_t");
             DivideTest<int32_t
-#if defined(LIBDIVIDE_USE_SSE2)
-            , __m128i
-#elif defined(LIBDIVIDE_USE_NEON)
-            , int32x2_t, int32x4_t, int32x4x2_t
+#if defined(LIBDIVIDE_VEC64)
+            , libdivide_2s32_t
+#endif
+#if defined(LIBDIVIDE_VEC128)
+            , libdivide_4s32_t
+#endif
+#if defined(LIBDIVIDE_VEC256)
+            , libdivide_8s32_t
 #endif
             > dt;
             dt.run();
@@ -271,10 +267,14 @@ static void *perform_test(void *ptr) {
             if (! sRunU32) break;
             puts("Starting uint32_t");
             DivideTest<uint32_t
-#if defined(LIBDIVIDE_USE_SSE2)
-            , __m128
-#elif defined(LIBDIVIDE_USE_NEON)
-            , uint32x2_t, uint32x4_t, uint32x4x2_t
+#if defined(LIBDIVIDE_VEC64)
+                , libdivide_2u32_t
+#endif
+#if defined(LIBDIVIDE_VEC128)
+                , libdivide_4u32_t
+#endif
+#if defined(LIBDIVIDE_VEC256)
+                , libdivide_8u32_t
 #endif
             > dt;
             dt.run();
@@ -286,10 +286,14 @@ static void *perform_test(void *ptr) {
             if (! sRunS64) break;
             puts("Starting sint64_t");
             DivideTest<int64_t
-#if defined(LIBDIVIDE_USE_SSE2)
-            , __m128i
-#elif defined(LIBDIVIDE_USE_NEON)
-            , int64x1_t, int64x2_t, int64x2x2_t
+#if defined(LIBDIVIDE_VEC64)
+                , libdivide_1s64_t
+#endif
+#if defined(LIBDIVIDE_VEC128)
+                , libdivide_2s64_t
+#endif
+#if defined(LIBDIVIDE_VEC256)
+                , libdivide_4s64_t
 #endif
             > dt;
             dt.run();
@@ -301,10 +305,14 @@ static void *perform_test(void *ptr) {
             if (! sRunU64) break;
             puts("Starting uint64_t");
             DivideTest<uint64_t
-#if defined(LIBDIVIDE_USE_SSE2)
-            , __m128i
-#elif defined(LIBDIVIDE_USE_NEON)
-            , uint64x1_t, uint64x2_t, uint64x2x2_t
+#if defined(LIBDIVIDE_VEC64)
+                , libdivide_1u64_t
+#endif
+#if defined(LIBDIVIDE_VEC128)
+                , libdivide_2u64_t
+#endif
+#if defined(LIBDIVIDE_VEC256)
+                , libdivide_4u64_t
 #endif
             > dt;
             dt.run();

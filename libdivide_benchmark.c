@@ -31,17 +31,21 @@ using namespace libdivide;
 #include <sys/time.h> //for gettimeofday()
 #endif
 
-#if LIBDIVIDE_USE_SSE2
-#define FUNC_VECTOR64(x)   NULL
-#define FUNC_VECTOR128(x)  (x)
-#define FUNC_VECTOR256(x)  NULL
-#elif LIBDIVIDE_USE_NEON
+#if LIBDIVIDE_VEC64
 #define FUNC_VECTOR64(x)   (x)
-#define FUNC_VECTOR128(x)  (x)
-#define FUNC_VECTOR256(x)  (x)
 #else
 #define FUNC_VECTOR64(x)   NULL
+#endif
+
+#if LIBDIVIDE_VEC128
+#define FUNC_VECTOR128(x)  (x)
+#else
 #define FUNC_VECTOR128(x)  NULL
+#endif
+
+#if LIBDIVIDE_VEC256
+#define FUNC_VECTOR256(x)  (x)
+#else
 #define FUNC_VECTOR256(x)  NULL
 #endif
 

@@ -177,36 +177,17 @@ LIBDIVIDE_API int64_t libdivide_s64_do_alg3(int64_t numer, const struct libdivid
 LIBDIVIDE_API int64_t libdivide_s64_do_alg4(int64_t numer, const struct libdivide_s64_t *denom);
 
 #if LIBDIVIDE_USE_SSE2
+#define LIBDIVIDE_VEC128 1
+
 typedef __m128i libdivide_4s32_t;
 typedef __m128i libdivide_2s64_t;
 typedef __m128i libdivide_4u32_t;
 typedef __m128i libdivide_2u64_t;
-
-LIBDIVIDE_API __m128i libdivide_4u32_do_vector(__m128i numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API __m128i libdivide_4s32_do_vector(__m128i numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API __m128i libdivide_2u64_do_vector(__m128i numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API __m128i libdivide_2s64_do_vector(__m128i numers, const struct libdivide_s64_t * denom);
-
-LIBDIVIDE_API __m128i libdivide_4u32_do_vector_alg0(__m128i numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API __m128i libdivide_4u32_do_vector_alg1(__m128i numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API __m128i libdivide_4u32_do_vector_alg2(__m128i numers, const struct libdivide_u32_t * denom);
-
-LIBDIVIDE_API __m128i libdivide_4s32_do_vector_alg0(__m128i numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API __m128i libdivide_4s32_do_vector_alg1(__m128i numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API __m128i libdivide_4s32_do_vector_alg2(__m128i numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API __m128i libdivide_4s32_do_vector_alg3(__m128i numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API __m128i libdivide_4s32_do_vector_alg4(__m128i numers, const struct libdivide_s32_t * denom);
-
-LIBDIVIDE_API __m128i libdivide_2u64_do_vector_alg0(__m128i numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API __m128i libdivide_2u64_do_vector_alg1(__m128i numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API __m128i libdivide_2u64_do_vector_alg2(__m128i numers, const struct libdivide_u64_t * denom);
-
-LIBDIVIDE_API __m128i libdivide_2s64_do_vector_alg0(__m128i numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API __m128i libdivide_2s64_do_vector_alg1(__m128i numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API __m128i libdivide_2s64_do_vector_alg2(__m128i numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API __m128i libdivide_2s64_do_vector_alg3(__m128i numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API __m128i libdivide_2s64_do_vector_alg4(__m128i numers, const struct libdivide_s64_t * denom);
 #elif LIBDIVIDE_USE_NEON
+#define LIBDIVIDE_VEC64  1
+#define LIBDIVIDE_VEC128 1
+#define LIBDIVIDE_VEC256 1
+
 typedef int32x2_t   libdivide_2s32_t;
 typedef int32x4_t   libdivide_4s32_t;
 typedef int32x4x2_t libdivide_8s32_t;
@@ -220,72 +201,11 @@ typedef uint32x4x2_t libdivide_8u32_t;
 typedef uint64x1_t   libdivide_1u64_t;
 typedef uint64x2_t   libdivide_2u64_t;
 typedef uint64x2x2_t libdivide_4u64_t;
-
-LIBDIVIDE_API    int32x2_t libdivide_2s32_do_vector(   int32x2_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API    int32x4_t libdivide_4s32_do_vector(   int32x4_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API  int32x4x2_t libdivide_8s32_do_vector( int32x4x2_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API    int64x1_t libdivide_1s64_do_vector(   int64x1_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API    int64x2_t libdivide_2s64_do_vector(   int64x2_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API  int64x2x2_t libdivide_4s64_do_vector( int64x2x2_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API   uint32x2_t libdivide_2u32_do_vector(  uint32x2_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API   uint32x4_t libdivide_4u32_do_vector(  uint32x4_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API uint32x4x2_t libdivide_8u32_do_vector(uint32x4x2_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API   uint64x1_t libdivide_1u64_do_vector(  uint64x1_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API   uint64x2_t libdivide_2u64_do_vector(  uint64x2_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API uint64x2x2_t libdivide_4u64_do_vector(uint64x2x2_t numers, const struct libdivide_u64_t * denom);
-
-LIBDIVIDE_API   uint32x2_t libdivide_2u32_do_vector_alg0(  uint32x2_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API   uint32x4_t libdivide_4u32_do_vector_alg0(  uint32x4_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API uint32x4x2_t libdivide_8u32_do_vector_alg0(uint32x4x2_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API   uint32x2_t libdivide_2u32_do_vector_alg1(  uint32x2_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API   uint32x4_t libdivide_4u32_do_vector_alg1(  uint32x4_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API uint32x4x2_t libdivide_8u32_do_vector_alg1(uint32x4x2_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API   uint32x2_t libdivide_2u32_do_vector_alg2(  uint32x2_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API   uint32x4_t libdivide_4u32_do_vector_alg2(  uint32x4_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API uint32x4x2_t libdivide_8u32_do_vector_alg2(uint32x4x2_t numers, const struct libdivide_u32_t * denom);
-
-LIBDIVIDE_API   int32x2_t libdivide_2s32_do_vector_alg0(  int32x2_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API   int32x4_t libdivide_4s32_do_vector_alg0(  int32x4_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API int32x4x2_t libdivide_8s32_do_vector_alg0(int32x4x2_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API   int32x2_t libdivide_2s32_do_vector_alg1(  int32x2_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API   int32x4_t libdivide_4s32_do_vector_alg1(  int32x4_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API int32x4x2_t libdivide_8s32_do_vector_alg1(int32x4x2_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API   int32x2_t libdivide_2s32_do_vector_alg2(  int32x2_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API   int32x4_t libdivide_4s32_do_vector_alg2(  int32x4_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API int32x4x2_t libdivide_8s32_do_vector_alg2(int32x4x2_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API   int32x2_t libdivide_2s32_do_vector_alg3(  int32x2_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API   int32x4_t libdivide_4s32_do_vector_alg3(  int32x4_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API int32x4x2_t libdivide_8s32_do_vector_alg3(int32x4x2_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API   int32x2_t libdivide_2s32_do_vector_alg4(  int32x2_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API   int32x4_t libdivide_4s32_do_vector_alg4(  int32x4_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API int32x4x2_t libdivide_8s32_do_vector_alg4(int32x4x2_t numers, const struct libdivide_s32_t * denom);
-
-LIBDIVIDE_API   uint64x1_t libdivide_1u64_do_vector_alg0(  uint64x1_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API   uint64x2_t libdivide_2u64_do_vector_alg0(  uint64x2_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API uint64x2x2_t libdivide_4u64_do_vector_alg0(uint64x2x2_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API   uint64x1_t libdivide_1u64_do_vector_alg1(  uint64x1_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API   uint64x2_t libdivide_2u64_do_vector_alg1(  uint64x2_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API uint64x2x2_t libdivide_4u64_do_vector_alg1(uint64x2x2_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API   uint64x1_t libdivide_1u64_do_vector_alg2(  uint64x1_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API   uint64x2_t libdivide_2u64_do_vector_alg2(  uint64x2_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API uint64x2x2_t libdivide_4u64_do_vector_alg2(uint64x2x2_t numers, const struct libdivide_u64_t * denom);
-
-LIBDIVIDE_API   int64x1_t libdivide_1s64_do_vector_alg0(  int64x1_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API   int64x2_t libdivide_2s64_do_vector_alg0(  int64x2_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API int64x2x2_t libdivide_4s64_do_vector_alg0(int64x2x2_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API   int64x1_t libdivide_1s64_do_vector_alg1(  int64x1_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API   int64x2_t libdivide_2s64_do_vector_alg1(  int64x2_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API int64x2x2_t libdivide_4s64_do_vector_alg1(int64x2x2_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API   int64x1_t libdivide_1s64_do_vector_alg2(  int64x1_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API   int64x2_t libdivide_2s64_do_vector_alg2(  int64x2_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API int64x2x2_t libdivide_4s64_do_vector_alg2(int64x2x2_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API   int64x1_t libdivide_1s64_do_vector_alg3(  int64x1_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API   int64x2_t libdivide_2s64_do_vector_alg3(  int64x2_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API int64x2x2_t libdivide_4s64_do_vector_alg3(int64x2x2_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API   int64x1_t libdivide_1s64_do_vector_alg4(  int64x1_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API   int64x2_t libdivide_2s64_do_vector_alg4(  int64x2_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API int64x2x2_t libdivide_4s64_do_vector_alg4(int64x2x2_t numers, const struct libdivide_s64_t * denom);
 #elif LIBDIVIDE_USE_VECTOR
+#define LIBDIVIDE_VEC64  1
+#define LIBDIVIDE_VEC128 1
+#define LIBDIVIDE_VEC256 1
+
 typedef  int32_t libdivide_2s32_t __attribute__((__vector_size__(8)));
 typedef  int32_t libdivide_4s32_t __attribute__((__vector_size__(16)));
 typedef  int32_t libdivide_8s32_t __attribute__((__vector_size__(32)));
@@ -299,70 +219,86 @@ typedef uint32_t libdivide_8u32_t __attribute__((__vector_size__(32)));
 typedef uint64_t libdivide_1u64_t __attribute__((__vector_size__(8)));
 typedef uint64_t libdivide_2u64_t __attribute__((__vector_size__(16)));
 typedef uint64_t libdivide_4u64_t __attribute__((__vector_size__(32)));
+#endif
 
+#if LIBDIVIDE_VEC64
 LIBDIVIDE_API libdivide_2s32_t libdivide_2s32_do_vector(libdivide_2s32_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API libdivide_4s32_t libdivide_4s32_do_vector(libdivide_4s32_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API libdivide_8s32_t libdivide_8s32_do_vector(libdivide_8s32_t numers, const struct libdivide_s32_t * denom);
 LIBDIVIDE_API libdivide_1s64_t libdivide_1s64_do_vector(libdivide_1s64_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API libdivide_2s64_t libdivide_2s64_do_vector(libdivide_2s64_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API libdivide_4s64_t libdivide_4s64_do_vector(libdivide_4s64_t numers, const struct libdivide_s64_t * denom);
 LIBDIVIDE_API libdivide_2u32_t libdivide_2u32_do_vector(libdivide_2u32_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API libdivide_4u32_t libdivide_4u32_do_vector(libdivide_4u32_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API libdivide_8u32_t libdivide_8u32_do_vector(libdivide_8u32_t numers, const struct libdivide_u32_t * denom);
 LIBDIVIDE_API libdivide_1u64_t libdivide_1u64_do_vector(libdivide_1u64_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API libdivide_2u64_t libdivide_2u64_do_vector(libdivide_2u64_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API libdivide_4u64_t libdivide_4u64_do_vector(libdivide_4u64_t numers, const struct libdivide_u64_t * denom);
 
 LIBDIVIDE_API libdivide_2u32_t libdivide_2u32_do_vector_alg0(libdivide_2u32_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API libdivide_4u32_t libdivide_4u32_do_vector_alg0(libdivide_4u32_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API libdivide_8u32_t libdivide_8u32_do_vector_alg0(libdivide_8u32_t numers, const struct libdivide_u32_t * denom);
 LIBDIVIDE_API libdivide_2u32_t libdivide_2u32_do_vector_alg1(libdivide_2u32_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API libdivide_4u32_t libdivide_4u32_do_vector_alg1(libdivide_4u32_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API libdivide_8u32_t libdivide_8u32_do_vector_alg1(libdivide_8u32_t numers, const struct libdivide_u32_t * denom);
 LIBDIVIDE_API libdivide_2u32_t libdivide_2u32_do_vector_alg2(libdivide_2u32_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API libdivide_4u32_t libdivide_4u32_do_vector_alg2(libdivide_4u32_t numers, const struct libdivide_u32_t * denom);
-LIBDIVIDE_API libdivide_8u32_t libdivide_8u32_do_vector_alg2(libdivide_8u32_t numers, const struct libdivide_u32_t * denom);
 
 LIBDIVIDE_API libdivide_2s32_t libdivide_2s32_do_vector_alg0(libdivide_2s32_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API libdivide_4s32_t libdivide_4s32_do_vector_alg0(libdivide_4s32_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API libdivide_8s32_t libdivide_8s32_do_vector_alg0(libdivide_8s32_t numers, const struct libdivide_s32_t * denom);
 LIBDIVIDE_API libdivide_2s32_t libdivide_2s32_do_vector_alg1(libdivide_2s32_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API libdivide_4s32_t libdivide_4s32_do_vector_alg1(libdivide_4s32_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API libdivide_8s32_t libdivide_8s32_do_vector_alg1(libdivide_8s32_t numers, const struct libdivide_s32_t * denom);
 LIBDIVIDE_API libdivide_2s32_t libdivide_2s32_do_vector_alg2(libdivide_2s32_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API libdivide_4s32_t libdivide_4s32_do_vector_alg2(libdivide_4s32_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API libdivide_8s32_t libdivide_8s32_do_vector_alg2(libdivide_8s32_t numers, const struct libdivide_s32_t * denom);
 LIBDIVIDE_API libdivide_2s32_t libdivide_2s32_do_vector_alg3(libdivide_2s32_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API libdivide_4s32_t libdivide_4s32_do_vector_alg3(libdivide_4s32_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API libdivide_8s32_t libdivide_8s32_do_vector_alg3(libdivide_8s32_t numers, const struct libdivide_s32_t * denom);
 LIBDIVIDE_API libdivide_2s32_t libdivide_2s32_do_vector_alg4(libdivide_2s32_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API libdivide_4s32_t libdivide_4s32_do_vector_alg4(libdivide_4s32_t numers, const struct libdivide_s32_t * denom);
-LIBDIVIDE_API libdivide_8s32_t libdivide_8s32_do_vector_alg4(libdivide_8s32_t numers, const struct libdivide_s32_t * denom);
 
 LIBDIVIDE_API libdivide_1u64_t libdivide_1u64_do_vector_alg0(libdivide_1u64_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API libdivide_2u64_t libdivide_2u64_do_vector_alg0(libdivide_2u64_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API libdivide_4u64_t libdivide_4u64_do_vector_alg0(libdivide_4u64_t numers, const struct libdivide_u64_t * denom);
 LIBDIVIDE_API libdivide_1u64_t libdivide_1u64_do_vector_alg1(libdivide_1u64_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API libdivide_2u64_t libdivide_2u64_do_vector_alg1(libdivide_2u64_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API libdivide_4u64_t libdivide_4u64_do_vector_alg1(libdivide_4u64_t numers, const struct libdivide_u64_t * denom);
 LIBDIVIDE_API libdivide_1u64_t libdivide_1u64_do_vector_alg2(libdivide_1u64_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API libdivide_2u64_t libdivide_2u64_do_vector_alg2(libdivide_2u64_t numers, const struct libdivide_u64_t * denom);
-LIBDIVIDE_API libdivide_4u64_t libdivide_4u64_do_vector_alg2(libdivide_4u64_t numers, const struct libdivide_u64_t * denom);
 
 LIBDIVIDE_API libdivide_1s64_t libdivide_1s64_do_vector_alg0(libdivide_1s64_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API libdivide_2s64_t libdivide_2s64_do_vector_alg0(libdivide_2s64_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API libdivide_4s64_t libdivide_4s64_do_vector_alg0(libdivide_4s64_t numers, const struct libdivide_s64_t * denom);
 LIBDIVIDE_API libdivide_1s64_t libdivide_1s64_do_vector_alg1(libdivide_1s64_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API libdivide_2s64_t libdivide_2s64_do_vector_alg1(libdivide_2s64_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API libdivide_4s64_t libdivide_4s64_do_vector_alg1(libdivide_4s64_t numers, const struct libdivide_s64_t * denom);
 LIBDIVIDE_API libdivide_1s64_t libdivide_1s64_do_vector_alg2(libdivide_1s64_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API libdivide_2s64_t libdivide_2s64_do_vector_alg2(libdivide_2s64_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API libdivide_4s64_t libdivide_4s64_do_vector_alg2(libdivide_4s64_t numers, const struct libdivide_s64_t * denom);
 LIBDIVIDE_API libdivide_1s64_t libdivide_1s64_do_vector_alg3(libdivide_1s64_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API libdivide_2s64_t libdivide_2s64_do_vector_alg3(libdivide_2s64_t numers, const struct libdivide_s64_t * denom);
-LIBDIVIDE_API libdivide_4s64_t libdivide_4s64_do_vector_alg3(libdivide_4s64_t numers, const struct libdivide_s64_t * denom);
 LIBDIVIDE_API libdivide_1s64_t libdivide_1s64_do_vector_alg4(libdivide_1s64_t numers, const struct libdivide_s64_t * denom);
+#endif
+
+#if LIBDIVIDE_VEC128
+LIBDIVIDE_API libdivide_4s32_t libdivide_4s32_do_vector(libdivide_4s32_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API libdivide_2s64_t libdivide_2s64_do_vector(libdivide_2s64_t numers, const struct libdivide_s64_t * denom);
+LIBDIVIDE_API libdivide_4u32_t libdivide_4u32_do_vector(libdivide_4u32_t numers, const struct libdivide_u32_t * denom);
+LIBDIVIDE_API libdivide_2u64_t libdivide_2u64_do_vector(libdivide_2u64_t numers, const struct libdivide_u64_t * denom);
+
+LIBDIVIDE_API libdivide_4u32_t libdivide_4u32_do_vector_alg0(libdivide_4u32_t numers, const struct libdivide_u32_t * denom);
+LIBDIVIDE_API libdivide_4u32_t libdivide_4u32_do_vector_alg1(libdivide_4u32_t numers, const struct libdivide_u32_t * denom);
+LIBDIVIDE_API libdivide_4u32_t libdivide_4u32_do_vector_alg2(libdivide_4u32_t numers, const struct libdivide_u32_t * denom);
+
+LIBDIVIDE_API libdivide_4s32_t libdivide_4s32_do_vector_alg0(libdivide_4s32_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API libdivide_4s32_t libdivide_4s32_do_vector_alg1(libdivide_4s32_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API libdivide_4s32_t libdivide_4s32_do_vector_alg2(libdivide_4s32_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API libdivide_4s32_t libdivide_4s32_do_vector_alg3(libdivide_4s32_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API libdivide_4s32_t libdivide_4s32_do_vector_alg4(libdivide_4s32_t numers, const struct libdivide_s32_t * denom);
+
+LIBDIVIDE_API libdivide_2u64_t libdivide_2u64_do_vector_alg0(libdivide_2u64_t numers, const struct libdivide_u64_t * denom);
+LIBDIVIDE_API libdivide_2u64_t libdivide_2u64_do_vector_alg1(libdivide_2u64_t numers, const struct libdivide_u64_t * denom);
+LIBDIVIDE_API libdivide_2u64_t libdivide_2u64_do_vector_alg2(libdivide_2u64_t numers, const struct libdivide_u64_t * denom);
+
+LIBDIVIDE_API libdivide_2s64_t libdivide_2s64_do_vector_alg0(libdivide_2s64_t numers, const struct libdivide_s64_t * denom);
+LIBDIVIDE_API libdivide_2s64_t libdivide_2s64_do_vector_alg1(libdivide_2s64_t numers, const struct libdivide_s64_t * denom);
+LIBDIVIDE_API libdivide_2s64_t libdivide_2s64_do_vector_alg2(libdivide_2s64_t numers, const struct libdivide_s64_t * denom);
+LIBDIVIDE_API libdivide_2s64_t libdivide_2s64_do_vector_alg3(libdivide_2s64_t numers, const struct libdivide_s64_t * denom);
 LIBDIVIDE_API libdivide_2s64_t libdivide_2s64_do_vector_alg4(libdivide_2s64_t numers, const struct libdivide_s64_t * denom);
+#endif
+
+#if LIBDIVIDE_VEC256
+LIBDIVIDE_API libdivide_8s32_t libdivide_8s32_do_vector(libdivide_8s32_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API libdivide_4s64_t libdivide_4s64_do_vector(libdivide_4s64_t numers, const struct libdivide_s64_t * denom);
+LIBDIVIDE_API libdivide_8u32_t libdivide_8u32_do_vector(libdivide_8u32_t numers, const struct libdivide_u32_t * denom);
+LIBDIVIDE_API libdivide_4u64_t libdivide_4u64_do_vector(libdivide_4u64_t numers, const struct libdivide_u64_t * denom);
+
+LIBDIVIDE_API libdivide_8u32_t libdivide_8u32_do_vector_alg0(libdivide_8u32_t numers, const struct libdivide_u32_t * denom);
+LIBDIVIDE_API libdivide_8u32_t libdivide_8u32_do_vector_alg1(libdivide_8u32_t numers, const struct libdivide_u32_t * denom);
+LIBDIVIDE_API libdivide_8u32_t libdivide_8u32_do_vector_alg2(libdivide_8u32_t numers, const struct libdivide_u32_t * denom);
+
+LIBDIVIDE_API libdivide_8s32_t libdivide_8s32_do_vector_alg0(libdivide_8s32_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API libdivide_8s32_t libdivide_8s32_do_vector_alg1(libdivide_8s32_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API libdivide_8s32_t libdivide_8s32_do_vector_alg2(libdivide_8s32_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API libdivide_8s32_t libdivide_8s32_do_vector_alg3(libdivide_8s32_t numers, const struct libdivide_s32_t * denom);
+LIBDIVIDE_API libdivide_8s32_t libdivide_8s32_do_vector_alg4(libdivide_8s32_t numers, const struct libdivide_s32_t * denom);
+
+LIBDIVIDE_API libdivide_4u64_t libdivide_4u64_do_vector_alg0(libdivide_4u64_t numers, const struct libdivide_u64_t * denom);
+LIBDIVIDE_API libdivide_4u64_t libdivide_4u64_do_vector_alg1(libdivide_4u64_t numers, const struct libdivide_u64_t * denom);
+LIBDIVIDE_API libdivide_4u64_t libdivide_4u64_do_vector_alg2(libdivide_4u64_t numers, const struct libdivide_u64_t * denom);
+
+LIBDIVIDE_API libdivide_4s64_t libdivide_4s64_do_vector_alg0(libdivide_4s64_t numers, const struct libdivide_s64_t * denom);
+LIBDIVIDE_API libdivide_4s64_t libdivide_4s64_do_vector_alg1(libdivide_4s64_t numers, const struct libdivide_s64_t * denom);
+LIBDIVIDE_API libdivide_4s64_t libdivide_4s64_do_vector_alg2(libdivide_4s64_t numers, const struct libdivide_s64_t * denom);
+LIBDIVIDE_API libdivide_4s64_t libdivide_4s64_do_vector_alg3(libdivide_4s64_t numers, const struct libdivide_s64_t * denom);
 LIBDIVIDE_API libdivide_4s64_t libdivide_4s64_do_vector_alg4(libdivide_4s64_t numers, const struct libdivide_s64_t * denom);
 #endif
 
@@ -2338,19 +2274,25 @@ namespace libdivide_internal {
         IntType perform_divide(IntType val) const { return do_func(val, &denom); }
 #if LIBDIVIDE_USE_SSE2
         __m128i perform_divide_vector(__m128i val) const { return vector128_func(val, &denom); }
-#elif LIBDIVIDE_USE_NEON
-        int32x2_t perform_divide_vector(int32x2_t val) const { return vector64_func(val, &denom); }
-        int32x4_t perform_divide_vector(int32x4_t val) const { return vector128_func(val, &denom); }
-        int32x4x2_t perform_divide_vector(int32x4x2_t val) const { return vector256_func(val, &denom); }
-        int64x1_t perform_divide_vector(int64x1_t val) const { return vector64_func(val, &denom); }
-        int64x2_t perform_divide_vector(int64x2_t val) const { return vector128_func(val, &denom); }
-        int64x2x2_t perform_divide_vector(int64x2x2_t val) const { return vector256_func(val, &denom); }
-        uint32x2_t perform_divide_vector(uint32x2_t val) const { return vector64_func(val, &denom); }
-        uint32x4_t perform_divide_vector(uint32x4_t val) const { return vector128_func(val, &denom); }
-        uint32x4x2_t perform_divide_vector(uint32x4x2_t val) const { return vector256_func(val, &denom); }
-        uint64x1_t perform_divide_vector(uint64x1_t val) const { return vector64_func(val, &denom); }
-        uint64x2_t perform_divide_vector(uint64x2_t val) const { return vector128_func(val, &denom); }
-        uint64x2x2_t perform_divide_vector(uint64x2x2_t val) const { return vector256_func(val, &denom); }
+#else
+#if LIBDIVIDE_VEC64
+        libdivide_2s32_t perform_divide_vector(libdivide_2s32_t val) const { return vector64_func(val, &denom); }
+        libdivide_1s64_t perform_divide_vector(libdivide_1s64_t val) const { return vector64_func(val, &denom); }
+        libdivide_2u32_t perform_divide_vector(libdivide_2u32_t val) const { return vector64_func(val, &denom); }
+        libdivide_1u64_t perform_divide_vector(libdivide_1u64_t val) const { return vector64_func(val, &denom); }
+#endif
+#if LIBDIVIDE_VEC128
+        libdivide_4s32_t perform_divide_vector(libdivide_4s32_t val) const { return vector128_func(val, &denom); }
+        libdivide_2s64_t perform_divide_vector(libdivide_2s64_t val) const { return vector128_func(val, &denom); }
+        libdivide_4u32_t perform_divide_vector(libdivide_4u32_t val) const { return vector128_func(val, &denom); }
+        libdivide_2u64_t perform_divide_vector(libdivide_2u64_t val) const { return vector128_func(val, &denom); }
+#endif
+#if LIBDIVIDE_VEC256
+        libdivide_8s32_t perform_divide_vector(libdivide_8s32_t val) const { return vector256_func(val, &denom); }
+        libdivide_4s64_t perform_divide_vector(libdivide_4s64_t val) const { return vector256_func(val, &denom); }
+        libdivide_8u32_t perform_divide_vector(libdivide_8u32_t val) const { return vector256_func(val, &denom); }
+        libdivide_4u64_t perform_divide_vector(libdivide_4u64_t val) const { return vector256_func(val, &denom); }
+#endif
 #endif
 
         int get_algorithm() const { return get_algo(&denom); }
