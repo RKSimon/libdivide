@@ -1111,100 +1111,100 @@ uint32x4x2_t libdivide_8u32_do_vector_alg2(uint32x4x2_t numers, const struct lib
 }
 #elif LIBDIVIDE_USE_VECTOR
 libdivide_2u32_t libdivide_2u32_do_vector(libdivide_2u32_t numers, const struct libdivide_u32_t *denom) {
-	uint8_t more = denom->more;
-	if (more & LIBDIVIDE_U32_SHIFT_PATH) {
-		return libdivide_2u32_do_vector_alg0(numers, denom);
-	}
-	else {
-		if (more & LIBDIVIDE_ADD_MARKER) {
-			return libdivide_2u32_do_vector_alg2(numers, denom);
-		}
-		else {
-			return libdivide_2u32_do_vector_alg1(numers, denom);
-		}
-	}
+    uint8_t more = denom->more;
+    if (more & LIBDIVIDE_U32_SHIFT_PATH) {
+        return libdivide_2u32_do_vector_alg0(numers, denom);
+    }
+    else {
+        if (more & LIBDIVIDE_ADD_MARKER) {
+            return libdivide_2u32_do_vector_alg2(numers, denom);
+        }
+        else {
+            return libdivide_2u32_do_vector_alg1(numers, denom);
+        }
+    }
 }
 libdivide_4u32_t libdivide_4u32_do_vector(libdivide_4u32_t numers, const struct libdivide_u32_t *denom) {
-	uint8_t more = denom->more;
-	if (more & LIBDIVIDE_U32_SHIFT_PATH) {
-		return libdivide_4u32_do_vector_alg0(numers, denom);
-	}
-	else {
-		if (more & LIBDIVIDE_ADD_MARKER) {
-			return libdivide_4u32_do_vector_alg2(numers, denom);
-		}
-		else {
-			return libdivide_4u32_do_vector_alg1(numers, denom);
-		}
-	}
+    uint8_t more = denom->more;
+    if (more & LIBDIVIDE_U32_SHIFT_PATH) {
+        return libdivide_4u32_do_vector_alg0(numers, denom);
+    }
+    else {
+        if (more & LIBDIVIDE_ADD_MARKER) {
+            return libdivide_4u32_do_vector_alg2(numers, denom);
+        }
+        else {
+            return libdivide_4u32_do_vector_alg1(numers, denom);
+        }
+    }
 }
 libdivide_8u32_t libdivide_8u32_do_vector(libdivide_8u32_t numers, const struct libdivide_u32_t *denom) {
-	uint8_t more = denom->more;
-	if (more & LIBDIVIDE_U32_SHIFT_PATH) {
-		return libdivide_8u32_do_vector_alg0(numers, denom);
-	}
-	else {
-		if (more & LIBDIVIDE_ADD_MARKER) {
-			return libdivide_8u32_do_vector_alg2(numers, denom);
-		}
-		else {
-			return libdivide_8u32_do_vector_alg1(numers, denom);
-		}
-	}
+    uint8_t more = denom->more;
+    if (more & LIBDIVIDE_U32_SHIFT_PATH) {
+        return libdivide_8u32_do_vector_alg0(numers, denom);
+    }
+    else {
+        if (more & LIBDIVIDE_ADD_MARKER) {
+            return libdivide_8u32_do_vector_alg2(numers, denom);
+        }
+        else {
+            return libdivide_8u32_do_vector_alg1(numers, denom);
+        }
+    }
 }
 
 libdivide_2u32_t libdivide_2u32_do_vector_alg0(libdivide_2u32_t numers, const struct libdivide_u32_t *denom) {
-	uint32_t s = (denom->more & LIBDIVIDE_32_SHIFT_MASK);
-	return numers >> (libdivide_2u32_t) { s, s };
+    uint32_t s = (denom->more & LIBDIVIDE_32_SHIFT_MASK);
+    return numers >> (libdivide_2u32_t) { s, s };
 }
 libdivide_4u32_t libdivide_4u32_do_vector_alg0(libdivide_4u32_t numers, const struct libdivide_u32_t *denom) {
-	uint32_t s = (denom->more & LIBDIVIDE_32_SHIFT_MASK);
-	return numers >> (libdivide_4u32_t) { s, s, s, s };
+    uint32_t s = (denom->more & LIBDIVIDE_32_SHIFT_MASK);
+    return numers >> (libdivide_4u32_t) { s, s, s, s };
 }
 libdivide_8u32_t libdivide_8u32_do_vector_alg0(libdivide_8u32_t numers, const struct libdivide_u32_t *denom) {
-	uint32_t s = (denom->more & LIBDIVIDE_32_SHIFT_MASK);
-	return numers >> (libdivide_8u32_t) { s, s, s, s, s, s, s, s };
+    uint32_t s = (denom->more & LIBDIVIDE_32_SHIFT_MASK);
+    return numers >> (libdivide_8u32_t) { s, s, s, s, s, s, s, s };
 }
 
 libdivide_2u32_t libdivide_2u32_do_vector_alg1(libdivide_2u32_t numers, const struct libdivide_u32_t *denom) {
-	uint32_t s = denom->more;
-	uint32_t m = denom->magic;
-	libdivide_2u32_t q = libdivide_mullhi_2u32_flat_vector( numers, (libdivide_2u32_t) { m, m } );
-	return q >> (libdivide_2u32_t) { s, s };
+    uint32_t s = denom->more;
+    uint32_t m = denom->magic;
+    libdivide_2u32_t q = libdivide_mullhi_2u32_flat_vector( numers, (libdivide_2u32_t) { m, m } );
+    return q >> (libdivide_2u32_t) { s, s };
 }
 libdivide_4u32_t libdivide_4u32_do_vector_alg1(libdivide_4u32_t numers, const struct libdivide_u32_t *denom) {
-	uint32_t s = denom->more;
-	uint32_t m = denom->magic;
-	libdivide_4u32_t q = libdivide_mullhi_4u32_flat_vector( numers, (libdivide_4u32_t) { m, m, m, m } );
-	return q >> (libdivide_4u32_t) { s, s, s, s };
+    uint32_t s = denom->more;
+    uint32_t m = denom->magic;
+    libdivide_4u32_t q = libdivide_mullhi_4u32_flat_vector( numers, (libdivide_4u32_t) { m, m, m, m } );
+    return q >> (libdivide_4u32_t) { s, s, s, s };
 }
 libdivide_8u32_t libdivide_8u32_do_vector_alg1(libdivide_8u32_t numers, const struct libdivide_u32_t *denom) {
-	uint32_t s = denom->more;
-	uint32_t m = denom->magic;
-	libdivide_8u32_t q = libdivide_mullhi_8u32_flat_vector( numers, (libdivide_8u32_t) { m, m, m, m, m, m, m, m } );
-	return q >> (libdivide_8u32_t) { s, s, s, s, s, s, s, s };
+    uint32_t s = denom->more;
+    uint32_t m = denom->magic;
+    libdivide_8u32_t q = libdivide_mullhi_8u32_flat_vector( numers, (libdivide_8u32_t) { m, m, m, m, m, m, m, m } );
+    return q >> (libdivide_8u32_t) { s, s, s, s, s, s, s, s };
 }
 
 libdivide_2u32_t libdivide_2u32_do_vector_alg2(libdivide_2u32_t numers, const struct libdivide_u32_t *denom) {
-	uint32_t s = denom->more & LIBDIVIDE_32_SHIFT_MASK;
-	uint32_t m = denom->magic;
-	libdivide_2u32_t q = libdivide_mullhi_2u32_flat_vector( numers, (libdivide_2u32_t) { m, m } );
-	libdivide_2u32_t t = ( ( numers - q ) >> (libdivide_2u32_t) { 1, 1 } ) + q;
-	return t >>  (libdivide_2u32_t) { s, s };
+    uint32_t s = denom->more & LIBDIVIDE_32_SHIFT_MASK;
+    uint32_t m = denom->magic;
+    libdivide_2u32_t q = libdivide_mullhi_2u32_flat_vector( numers, (libdivide_2u32_t) { m, m } );
+    libdivide_2u32_t t = ( ( numers - q ) >> (libdivide_2u32_t) { 1, 1 } ) + q;
+    return t >>  (libdivide_2u32_t) { s, s };
 }
 libdivide_4u32_t libdivide_4u32_do_vector_alg2(libdivide_4u32_t numers, const struct libdivide_u32_t *denom) {
-	uint32_t s = denom->more & LIBDIVIDE_32_SHIFT_MASK;
-	uint32_t m = denom->magic;
-	libdivide_4u32_t q = libdivide_mullhi_4u32_flat_vector( numers, (libdivide_4u32_t) { m, m, m, m } );
-	libdivide_4u32_t t = ( ( numers - q ) >> (libdivide_4u32_t) { 1, 1, 1, 1 } ) + q;
-	return t >>  (libdivide_4u32_t) { s, s, s, s };
+    uint32_t s = denom->more & LIBDIVIDE_32_SHIFT_MASK;
+    uint32_t m = denom->magic;
+    libdivide_4u32_t q = libdivide_mullhi_4u32_flat_vector( numers, (libdivide_4u32_t) { m, m, m, m } );
+    libdivide_4u32_t t = ( ( numers - q ) >> (libdivide_4u32_t) { 1, 1, 1, 1 } ) + q;
+    return t >>  (libdivide_4u32_t) { s, s, s, s };
 }
 libdivide_8u32_t libdivide_8u32_do_vector_alg2(libdivide_8u32_t numers, const struct libdivide_u32_t *denom) {
-	uint32_t s = denom->more & LIBDIVIDE_32_SHIFT_MASK;
-	uint32_t m = denom->magic;
-	libdivide_8u32_t q = libdivide_mullhi_8u32_flat_vector( numers, (libdivide_8u32_t) { m, m, m, m, m, m, m, m } );
-	libdivide_8u32_t t = ( ( numers - q ) >> (libdivide_8u32_t) { 1, 1, 1, 1, 1, 1, 1, 1 } ) + q;
-	return t >>  (libdivide_8u32_t) { s, s, s, s, s, s, s, s };
+    uint32_t s = denom->more & LIBDIVIDE_32_SHIFT_MASK;
+    uint32_t m = denom->magic;
+    libdivide_8u32_t q = libdivide_mullhi_8u32_flat_vector( numers, (libdivide_8u32_t) { m, m, m, m, m, m, m, m } );
+    libdivide_8u32_t t = ( ( numers - q ) >> (libdivide_8u32_t) { 1, 1, 1, 1, 1, 1, 1, 1 } ) + q;
+    return t >>  (libdivide_8u32_t) { s, s, s, s, s, s, s, s };
 }
 #endif
 
@@ -1447,100 +1447,100 @@ uint64x2x2_t libdivide_4u64_do_vector_alg2(uint64x2x2_t numers, const struct lib
 }
 #elif LIBDIVIDE_USE_VECTOR
 libdivide_1u64_t libdivide_1u64_do_vector(libdivide_1u64_t numers, const struct libdivide_u64_t *denom) {
-	uint8_t more = denom->more;
-	if (more & LIBDIVIDE_U32_SHIFT_PATH) {
-		return libdivide_1u64_do_vector_alg0(numers, denom);
-	}
-	else {
-		if (more & LIBDIVIDE_ADD_MARKER) {
-			return libdivide_1u64_do_vector_alg2(numers, denom);
-		}
-		else {
-			return libdivide_1u64_do_vector_alg1(numers, denom);
-		}
-	}
+    uint8_t more = denom->more;
+    if (more & LIBDIVIDE_U32_SHIFT_PATH) {
+        return libdivide_1u64_do_vector_alg0(numers, denom);
+    }
+    else {
+        if (more & LIBDIVIDE_ADD_MARKER) {
+            return libdivide_1u64_do_vector_alg2(numers, denom);
+        }
+        else {
+            return libdivide_1u64_do_vector_alg1(numers, denom);
+        }
+    }
 }
 libdivide_2u64_t libdivide_2u64_do_vector(libdivide_2u64_t numers, const struct libdivide_u64_t *denom) {
-	uint8_t more = denom->more;
-	if (more & LIBDIVIDE_U32_SHIFT_PATH) {
-		return libdivide_2u64_do_vector_alg0(numers, denom);
-	}
-	else {
-		if (more & LIBDIVIDE_ADD_MARKER) {
-			return libdivide_2u64_do_vector_alg2(numers, denom);
-		}
-		else {
-			return libdivide_2u64_do_vector_alg1(numers, denom);
-		}
-	}
+    uint8_t more = denom->more;
+    if (more & LIBDIVIDE_U32_SHIFT_PATH) {
+        return libdivide_2u64_do_vector_alg0(numers, denom);
+    }
+    else {
+        if (more & LIBDIVIDE_ADD_MARKER) {
+            return libdivide_2u64_do_vector_alg2(numers, denom);
+        }
+        else {
+            return libdivide_2u64_do_vector_alg1(numers, denom);
+        }
+    }
 }
 libdivide_4u64_t libdivide_4u64_do_vector(libdivide_4u64_t numers, const struct libdivide_u64_t *denom) {
-	uint8_t more = denom->more;
-	if (more & LIBDIVIDE_U32_SHIFT_PATH) {
-		return libdivide_4u64_do_vector_alg0(numers, denom);
-	}
-	else {
-		if (more & LIBDIVIDE_ADD_MARKER) {
-			return libdivide_4u64_do_vector_alg2(numers, denom);
-		}
-		else {
-			return libdivide_4u64_do_vector_alg1(numers, denom);
-		}
-	}
+    uint8_t more = denom->more;
+    if (more & LIBDIVIDE_U32_SHIFT_PATH) {
+        return libdivide_4u64_do_vector_alg0(numers, denom);
+    }
+    else {
+        if (more & LIBDIVIDE_ADD_MARKER) {
+            return libdivide_4u64_do_vector_alg2(numers, denom);
+        }
+        else {
+            return libdivide_4u64_do_vector_alg1(numers, denom);
+        }
+    }
 }
 
 libdivide_1u64_t libdivide_1u64_do_vector_alg0(libdivide_1u64_t numers, const struct libdivide_u64_t *denom) {
-	uint32_t s = (denom->more & LIBDIVIDE_32_SHIFT_MASK);
-	return numers >> (libdivide_1u64_t) { s };
+    uint32_t s = (denom->more & LIBDIVIDE_32_SHIFT_MASK);
+    return numers >> (libdivide_1u64_t) { s };
 }
 libdivide_2u64_t libdivide_2u64_do_vector_alg0(libdivide_2u64_t numers, const struct libdivide_u64_t *denom) {
-	uint32_t s = (denom->more & LIBDIVIDE_32_SHIFT_MASK);
-	return numers >> (libdivide_2u64_t) { s, s };
+    uint32_t s = (denom->more & LIBDIVIDE_32_SHIFT_MASK);
+    return numers >> (libdivide_2u64_t) { s, s };
 }
 libdivide_4u64_t libdivide_4u64_do_vector_alg0(libdivide_4u64_t numers, const struct libdivide_u64_t *denom) {
-	uint32_t s = (denom->more & LIBDIVIDE_32_SHIFT_MASK);
-	return numers >> (libdivide_4u64_t) { s, s, s, s };
+    uint32_t s = (denom->more & LIBDIVIDE_32_SHIFT_MASK);
+    return numers >> (libdivide_4u64_t) { s, s, s, s };
 }
 
 libdivide_1u64_t libdivide_1u64_do_vector_alg1(libdivide_1u64_t numers, const struct libdivide_u64_t *denom) {
-	uint32_t s = denom->more;
-	uint32_t m = denom->magic;
-	libdivide_1u64_t q = libdivide_mullhi_1u64_flat_vector( numers, (libdivide_1u64_t) { m } );
-	return q >> (libdivide_1u64_t) { s };
+    uint32_t s = denom->more;
+    uint32_t m = denom->magic;
+    libdivide_1u64_t q = libdivide_mullhi_1u64_flat_vector( numers, (libdivide_1u64_t) { m } );
+    return q >> (libdivide_1u64_t) { s };
 }
 libdivide_2u64_t libdivide_2u64_do_vector_alg1(libdivide_2u64_t numers, const struct libdivide_u64_t *denom) {
-	uint32_t s = denom->more;
-	uint32_t m = denom->magic;
-	libdivide_2u64_t q = libdivide_mullhi_2u64_flat_vector( numers, (libdivide_2u64_t) { m, m } );
-	return q >> (libdivide_2u64_t) { s, s };
+    uint32_t s = denom->more;
+    uint32_t m = denom->magic;
+    libdivide_2u64_t q = libdivide_mullhi_2u64_flat_vector( numers, (libdivide_2u64_t) { m, m } );
+    return q >> (libdivide_2u64_t) { s, s };
 }
 libdivide_4u64_t libdivide_4u64_do_vector_alg1(libdivide_4u64_t numers, const struct libdivide_u64_t *denom) {
-	uint32_t s = denom->more;
-	uint32_t m = denom->magic;
-	libdivide_4u64_t q = libdivide_mullhi_4u64_flat_vector( numers, (libdivide_4u64_t) { m, m, m, m } );
-	return q >> (libdivide_4u64_t) { s, s, s, s };
+    uint32_t s = denom->more;
+    uint32_t m = denom->magic;
+    libdivide_4u64_t q = libdivide_mullhi_4u64_flat_vector( numers, (libdivide_4u64_t) { m, m, m, m } );
+    return q >> (libdivide_4u64_t) { s, s, s, s };
 }
 
 libdivide_1u64_t libdivide_1u64_do_vector_alg2(libdivide_1u64_t numers, const struct libdivide_u64_t *denom) {
-	uint32_t s = denom->more & LIBDIVIDE_32_SHIFT_MASK;
-	uint32_t m = denom->magic;
-	libdivide_1u64_t q = libdivide_mullhi_1u64_flat_vector( numers, (libdivide_1u64_t) { m } );
-	libdivide_1u64_t t = ( ( numers - q ) >> (libdivide_1u64_t) { 1 } ) + q;
-	return t >>  (libdivide_1u64_t) { s };
+    uint32_t s = denom->more & LIBDIVIDE_32_SHIFT_MASK;
+    uint32_t m = denom->magic;
+    libdivide_1u64_t q = libdivide_mullhi_1u64_flat_vector( numers, (libdivide_1u64_t) { m } );
+    libdivide_1u64_t t = ( ( numers - q ) >> (libdivide_1u64_t) { 1 } ) + q;
+    return t >>  (libdivide_1u64_t) { s };
 }
 libdivide_2u64_t libdivide_2u64_do_vector_alg2(libdivide_2u64_t numers, const struct libdivide_u64_t *denom) {
-	uint32_t s = denom->more & LIBDIVIDE_32_SHIFT_MASK;
-	uint32_t m = denom->magic;
-	libdivide_2u64_t q = libdivide_mullhi_2u64_flat_vector( numers, (libdivide_2u64_t) { m, m } );
-	libdivide_2u64_t t = ( ( numers - q ) >> (libdivide_2u64_t) { 1, 1 } ) + q;
-	return t >>  (libdivide_2u64_t) { s, s };
+    uint32_t s = denom->more & LIBDIVIDE_32_SHIFT_MASK;
+    uint32_t m = denom->magic;
+    libdivide_2u64_t q = libdivide_mullhi_2u64_flat_vector( numers, (libdivide_2u64_t) { m, m } );
+    libdivide_2u64_t t = ( ( numers - q ) >> (libdivide_2u64_t) { 1, 1 } ) + q;
+    return t >>  (libdivide_2u64_t) { s, s };
 }
 libdivide_4u64_t libdivide_4u64_do_vector_alg2(libdivide_4u64_t numers, const struct libdivide_u64_t *denom) {
-	uint32_t s = denom->more & LIBDIVIDE_32_SHIFT_MASK;
-	uint32_t m = denom->magic;
-	libdivide_4u64_t q = libdivide_mullhi_4u64_flat_vector( numers, (libdivide_4u64_t) { m, m, m, m } );
-	libdivide_4u64_t t = ( ( numers - q ) >> (libdivide_4u64_t) { 1, 1, 1, 1 } ) + q;
-	return t >>  (libdivide_4u64_t) { s, s, s, s };
+    uint32_t s = denom->more & LIBDIVIDE_32_SHIFT_MASK;
+    uint32_t m = denom->magic;
+    libdivide_4u64_t q = libdivide_mullhi_4u64_flat_vector( numers, (libdivide_4u64_t) { m, m, m, m } );
+    libdivide_4u64_t t = ( ( numers - q ) >> (libdivide_4u64_t) { 1, 1, 1, 1 } ) + q;
+    return t >>  (libdivide_4u64_t) { s, s, s, s };
 }
 #endif
 
@@ -2309,6 +2309,8 @@ namespace libdivide_internal {
     /* Some bogus unswitch functions for unsigned types so the same (presumably templated) code can work for both signed and unsigned. */
     template <typename T, typename U>
     T crash_divide(T, const U*) { abort(); return *(T*)NULL; }
+    uint32_t crash_u32(uint32_t, const libdivide_u32_t*) { abort(); return *(uint32_t*)NULL; }
+    uint64_t crash_u64(uint64_t, const libdivide_u64_t*) { abort(); return *(uint64_t*)NULL; }
 
     template<typename IntType, typename Vec64Type, typename Vec128Type, typename Vec256Type, typename DenomType, DenomType gen_func(IntType), int get_algo(const DenomType *), IntType do_func(IntType, const DenomType *), Vec64Type vector64_func(Vec64Type, const DenomType *), Vec128Type vector128_func(Vec128Type, const DenomType *), Vec256Type vector256_func(Vec256Type, const DenomType *)>
     class divider_base {
@@ -2358,8 +2360,8 @@ namespace libdivide_internal {
         template<int J> struct algo<2, J>  { typedef denom<libdivide_u32_do_alg2, MAYBE_VECTOR64(libdivide_2u32_do_vector_alg2), MAYBE_VECTOR128(libdivide_4u32_do_vector_alg2), MAYBE_VECTOR256(libdivide_8u32_do_vector_alg2)>::divider divider; };
 
         /* Define two more bogus ones so that the same (templated, presumably) code can handle both signed and unsigned */
-        template<int J> struct algo<3, J>  { typedef denom<crash_divide, MAYBE_VECTOR64(crash_divide), MAYBE_VECTOR128(crash_divide), MAYBE_VECTOR256(crash_divide)>::divider divider; };
-        template<int J> struct algo<4, J>  { typedef denom<crash_divide, MAYBE_VECTOR64(crash_divide), MAYBE_VECTOR128(crash_divide), MAYBE_VECTOR256(crash_divide)>::divider divider; };
+        template<int J> struct algo<3, J>  { typedef denom<crash_u32, MAYBE_VECTOR64(crash_divide), MAYBE_VECTOR128(crash_divide), MAYBE_VECTOR256(crash_divide)>::divider divider; };
+        template<int J> struct algo<4, J>  { typedef denom<crash_u32, MAYBE_VECTOR64(crash_divide), MAYBE_VECTOR128(crash_divide), MAYBE_VECTOR256(crash_divide)>::divider divider; };
     };
 
     template<> struct divider_mid<int32_t> {
@@ -2400,8 +2402,8 @@ namespace libdivide_internal {
         template<int J> struct algo<2, J>  { typedef denom<libdivide_u64_do_alg2, MAYBE_VECTOR64(libdivide_1u64_do_vector_alg2), MAYBE_VECTOR128(libdivide_2u64_do_vector_alg2), MAYBE_VECTOR256(libdivide_4u64_do_vector_alg2)>::divider divider; };
 
         /* Define two more bogus ones so that the same (templated, presumably) code can handle both signed and unsigned */
-        template<int J> struct algo<3, J>  { typedef denom<crash_divide, MAYBE_VECTOR64(crash_divide), MAYBE_VECTOR128(crash_divide), MAYBE_VECTOR256(crash_divide)>::divider divider; };
-        template<int J> struct algo<4, J>  { typedef denom<crash_divide, MAYBE_VECTOR64(crash_divide), MAYBE_VECTOR128(crash_divide), MAYBE_VECTOR256(crash_divide)>::divider divider; };
+        template<int J> struct algo<3, J>  { typedef denom<crash_u64, MAYBE_VECTOR64(crash_divide), MAYBE_VECTOR128(crash_divide), MAYBE_VECTOR256(crash_divide)>::divider divider; };
+        template<int J> struct algo<4, J>  { typedef denom<crash_u64, MAYBE_VECTOR64(crash_divide), MAYBE_VECTOR128(crash_divide), MAYBE_VECTOR256(crash_divide)>::divider divider; };
     };
 
     template<> struct divider_mid<int64_t> {
