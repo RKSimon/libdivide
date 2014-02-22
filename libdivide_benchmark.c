@@ -100,6 +100,23 @@ struct time_result {
 #define libdivide_add_4u32(x, y)        _mm_add_epi32(x, y)
 #define libdivide_add_2s64(x, y)        _mm_add_epi64(x, y)
 #define libdivide_add_2u64(x, y)        _mm_add_epi64(x, y)
+
+int32_t libdivide_sum_4s32(__m128i x) {
+	const int32_t *comps = (const int32_t*)&x;
+	return comps[0] + comps[1] + comps[2] + comps[3];
+}
+uint32_t libdivide_sum_4u32(__m128i x) {
+	const uint32_t *comps = (const uint32_t*)&x;
+	return comps[0] + comps[1] + comps[2] + comps[3];
+}
+int32_t libdivide_sum_2s642(__m128i x) {
+	const int32_t *comps = (const int64_t*)&x;
+	return comps[0] + comps[1];
+}
+int32_t libdivide_sum_2u64(__m128i x) {
+	const uint64_t *comps = (const uint64_t*)&x;
+	return comps[0] + comps[1];
+}
 #elif LIBDIVIDE_USE_NEON
 #define libdivide_zero_2s32()           vdup_n_s32(0)
 #define libdivide_zero_2u32()           vdup_n_u32(0)
@@ -126,6 +143,19 @@ struct time_result {
 #define libdivide_add_8u32(x, y)        (libdivide_8u32_t) { vaddq_u32(x.val[0], y.val[0]), vaddq_u32(x.val[1], y.val[1]) }
 #define libdivide_add_4s64(x, y)        (libdivide_4s64_t) { vaddq_s64(x.val[0], y.val[0]), vaddq_s64(x.val[1], y.val[1]) }
 #define libdivide_add_4u64(x, y)        (libdivide_4u64_t) { vaddq_u64(x.val[0], y.val[0]), vaddq_u64(x.val[1], y.val[1]) }
+
+#define libdivide_sum_2s32(x)           vget_lane_s32(vpadd_s32(x,x), 0)
+#define libdivide_sum_2u32(x)           vget_lane_u32(vpadd_u32(x,x), 0)
+#define libdivide_sum_1s64(x)           vget_lane_s64(x, 0)
+#define libdivide_sum_1u64(x)           vget_lane_u64(x, 0)
+#define libdivide_sum_4s32(x)           (libdivide_sum_2s32(vget_low_s32(x)) + libdivide_sum_2s32(vget_high_s32(x)))
+#define libdivide_sum_4u32(x)           (libdivide_sum_2u32(vget_low_u32(x)) + libdivide_sum_2u32(vget_high_u32(x)))
+#define libdivide_sum_2s64(x)           (libdivide_sum_1s64(vget_low_s64(x)) + libdivide_sum_1s64(vget_high_s64(x)))
+#define libdivide_sum_2u64(x)           (libdivide_sum_1u64(vget_low_u64(x)) + libdivide_sum_1u64(vget_high_u64(x)))
+#define libdivide_sum_8s32(x)           (libdivide_sum_4s32((x).val[0]) + libdivide_sum_4s32((x).val[1]))
+#define libdivide_sum_8u32(x)           (libdivide_sum_4u32((x).val[0]) + libdivide_sum_4u32((x).val[1]))
+#define libdivide_sum_4s64(x)           (libdivide_sum_2s64((x).val[0]) + libdivide_sum_2s64((x).val[1]))
+#define libdivide_sum_4u64(x)           (libdivide_sum_2u64((x).val[0]) + libdivide_sum_2u64((x).val[1]))
 #elif LIBDIVIDE_USE_VECTOR
 #define libdivide_zero_2s32()           (libdivide_2s32_t) { 0, 0 }
 #define libdivide_zero_2u32()           (libdivide_2u32_t) { 0, 0 }
@@ -152,6 +182,19 @@ struct time_result {
 #define libdivide_add_8u32(x, y)        ((x)+(y))
 #define libdivide_add_4s64(x, y)        ((x)+(y))
 #define libdivide_add_4u64(x, y)        ((x)+(y))
+
+#define libdivide_sum_2s32(x)           (x[0] + x[1])
+#define libdivide_sum_2u32(x)           (x[0] + x[1])
+#define libdivide_sum_1s64(x)           (x[0])
+#define libdivide_sum_1u64(x)           (x[0])
+#define libdivide_sum_4s32(x)           (x[0] + x[1] + x[2] + x[3])
+#define libdivide_sum_4u32(x)           (x[0] + x[1] + x[2] + x[3])
+#define libdivide_sum_2s64(x)           (x[0] + x[1])
+#define libdivide_sum_2u64(x)           (x[0] + x[1])
+#define libdivide_sum_8s32(x)           (x[0] + x[1] + x[2] + x[3] + x[4] + x[5] + x[6] + x[7])
+#define libdivide_sum_8u32(x)           (x[0] + x[1] + x[2] + x[3] + x[4] + x[5] + x[6] + x[7])
+#define libdivide_sum_4s64(x)           (x[0] + x[1] + x[2] + x[3])
+#define libdivide_sum_4u64(x)           (x[0] + x[1] + x[2] + x[3])
 #endif
 
 static struct time_result time_function(uint64_t (*func)(struct FunctionParams_t*), struct FunctionParams_t *params) {
@@ -252,8 +295,7 @@ NOINLINE static uint64_t mine_2u32_vector(struct FunctionParams_t *params) {
         libdivide_2u32_t result = libdivide_2u32_do_vector(numers, &denom);
         sumX = libdivide_add_2u32(sumX, result);
     }
-    const uint32_t *comps = (const uint32_t *)&sumX;
-    return comps[0] + comps[1];
+    return libdivide_sum_2u32(sumX);
 }
 
 NOINLINE static uint64_t mine_2u32_vector_unswitched(struct FunctionParams_t *params) {
@@ -283,8 +325,7 @@ NOINLINE static uint64_t mine_2u32_vector_unswitched(struct FunctionParams_t *pa
             sumX = libdivide_add_2u32(sumX, result);
         }
     }
-    const uint32_t *comps = (const uint32_t *)&sumX;
-    return comps[0] + comps[1];
+    return libdivide_sum_2u32(sumX);
 }
 #endif
 
@@ -299,8 +340,7 @@ NOINLINE static uint64_t mine_4u32_vector(struct FunctionParams_t *params) {
         libdivide_4u32_t result = libdivide_4u32_do_vector(numers, &denom);
         sumX = libdivide_add_4u32(sumX, result);
     }
-    const uint32_t *comps = (const uint32_t *)&sumX;
-    return comps[0] + comps[1] + comps[2] + comps[3];
+    return libdivide_sum_4u32(sumX);
 }
 
 NOINLINE static uint64_t mine_4u32_vector_unswitched(struct FunctionParams_t *params) {
@@ -330,8 +370,7 @@ NOINLINE static uint64_t mine_4u32_vector_unswitched(struct FunctionParams_t *pa
             sumX = libdivide_add_4u32(sumX, result);
         }
     }
-    const uint32_t *comps = (const uint32_t *)&sumX;
-    return comps[0] + comps[1] + comps[2] + comps[3];
+    return libdivide_sum_4u32(sumX);
 }
 #endif
 
@@ -346,8 +385,7 @@ NOINLINE static uint64_t mine_8u32_vector(struct FunctionParams_t *params) {
         libdivide_8u32_t result = libdivide_8u32_do_vector(numers, &denom);
         sumX = libdivide_add_8u32(sumX, result);
     }
-    const uint32_t *comps = (const uint32_t *)&sumX;
-    return comps[0] + comps[1] + comps[2] + comps[3] + comps[4] + comps[5] + comps[6] + comps[7];
+    return libdivide_sum_8u32(sumX);
 }
 
 NOINLINE static uint64_t mine_8u32_vector_unswitched(struct FunctionParams_t *params) {
@@ -377,8 +415,7 @@ NOINLINE static uint64_t mine_8u32_vector_unswitched(struct FunctionParams_t *pa
             sumX = libdivide_add_8u32(sumX, result);
         }
     }
-    const uint32_t *comps = (const uint32_t *)&sumX;
-    return comps[0] + comps[1] + comps[2] + comps[3] + comps[4] + comps[5] + comps[6] + comps[7];
+    return libdivide_sum_8u32(sumX);
 }
 #endif
 
@@ -469,9 +506,7 @@ NOINLINE static uint64_t mine_2s32_vector(struct FunctionParams_t *params) {
         libdivide_2s32_t result = libdivide_2s32_do_vector(numers, &denom);
         sumX = libdivide_add_2s32(sumX, result);
     }
-    const int32_t *comps = (const int32_t *)&sumX;
-    int32_t sum = comps[0] + comps[1];
-    return sum;
+    return libdivide_sum_2s32(sumX);
 }
 
 NOINLINE static uint64_t mine_2s32_vector_unswitched(struct FunctionParams_t *params) {
@@ -515,9 +550,7 @@ NOINLINE static uint64_t mine_2s32_vector_unswitched(struct FunctionParams_t *pa
             sumX = libdivide_add_2s32(sumX, result);
         }
     }
-    const int32_t *comps = (const int32_t *)&sumX;
-    int32_t sum = comps[0] + comps[1];
-    return sum;
+    return libdivide_sum_2s32(sumX);
 }
 #endif
 
@@ -532,9 +565,7 @@ NOINLINE static uint64_t mine_4s32_vector(struct FunctionParams_t *params) {
         libdivide_4s32_t result = libdivide_4s32_do_vector(numers, &denom);
         sumX = libdivide_add_4s32(sumX, result);
     }
-    const int32_t *comps = (const int32_t *)&sumX;
-    int32_t sum = comps[0] + comps[1] + comps[2] + comps[3];
-    return sum;
+    return libdivide_sum_4s32(sumX);
 }
 
 NOINLINE static uint64_t mine_4s32_vector_unswitched(struct FunctionParams_t *params) {
@@ -578,9 +609,7 @@ NOINLINE static uint64_t mine_4s32_vector_unswitched(struct FunctionParams_t *pa
             sumX = libdivide_add_4s32(sumX, result);
         }
     }
-    const int32_t *comps = (const int32_t *)&sumX;
-    int32_t sum = comps[0] + comps[1] + comps[2] + comps[3];
-    return sum;
+    return libdivide_sum_4s32(sumX);
 }
 #endif
 
@@ -595,9 +624,7 @@ NOINLINE static uint64_t mine_8s32_vector(struct FunctionParams_t *params) {
         libdivide_8s32_t result = libdivide_8s32_do_vector(numers, &denom);
         sumX = libdivide_add_8s32(sumX, result);
     }
-    const int32_t *comps = (const int32_t *)&sumX;
-    int32_t sum = comps[0] + comps[1] + comps[2] + comps[3] + comps[4] + comps[5] + comps[6] + comps[7];
-    return sum;
+    return libdivide_sum_8s32(sumX);
 }
 
 NOINLINE static uint64_t mine_8s32_vector_unswitched(struct FunctionParams_t *params) {
@@ -641,9 +668,7 @@ NOINLINE static uint64_t mine_8s32_vector_unswitched(struct FunctionParams_t *pa
             sumX = libdivide_add_8s32(sumX, result);
         }
     }
-    const int32_t *comps = (const int32_t *)&sumX;
-    int32_t sum = comps[0] + comps[1] + comps[2] + comps[3] + comps[4] + comps[5] + comps[6] + comps[7];
-    return sum;
+    return libdivide_sum_8s32(sumX);
 }
 #endif
 
@@ -722,8 +747,7 @@ NOINLINE static uint64_t mine_1u64_vector(struct FunctionParams_t *params) {
         libdivide_1u64_t result = libdivide_1u64_do_vector(numers, &denom);
         sumX = libdivide_add_1u64(sumX, result);
     }
-    const uint64_t *comps = (const uint64_t *)&sumX;
-    return comps[0];
+    return libdivide_sum_1u64(sumX);
 }
 
 NOINLINE static uint64_t mine_1u64_vector_unswitched(struct FunctionParams_t *params) {
@@ -753,8 +777,7 @@ NOINLINE static uint64_t mine_1u64_vector_unswitched(struct FunctionParams_t *pa
             sumX = libdivide_add_1u64(sumX, result);
         }
     }
-    const uint64_t *comps = (const uint64_t *)&sumX;
-    return comps[0];
+    return libdivide_sum_1u64(sumX);
 }
 #endif
 
@@ -769,8 +792,7 @@ NOINLINE static uint64_t mine_2u64_vector(struct FunctionParams_t *params) {
         libdivide_2u64_t result = libdivide_2u64_do_vector(numers, &denom);
         sumX = libdivide_add_2u64(sumX, result);
     }
-    const uint64_t *comps = (const uint64_t *)&sumX;
-    return comps[0] + comps[1];
+    return libdivide_sum_2u64(sumX);
 }
 
 NOINLINE static uint64_t mine_2u64_vector_unswitched(struct FunctionParams_t *params) {
@@ -800,8 +822,7 @@ NOINLINE static uint64_t mine_2u64_vector_unswitched(struct FunctionParams_t *pa
             sumX = libdivide_add_2u64(sumX, result);
         }
     }
-    const uint64_t *comps = (const uint64_t *)&sumX;
-    return comps[0] + comps[1];
+    return libdivide_sum_2u64(sumX);
 }
 #endif
 
@@ -816,8 +837,7 @@ NOINLINE static uint64_t mine_4u64_vector(struct FunctionParams_t *params) {
         libdivide_4u64_t result = libdivide_4u64_do_vector(numers, &denom);
         sumX = libdivide_add_4u64(sumX, result);
     }
-    const uint64_t *comps = (const uint64_t *)&sumX;
-    return comps[0] + comps[1] + comps[2] + comps[3];
+    return libdivide_sum_4u64(sumX);
 }
 
 NOINLINE static uint64_t mine_4u64_vector_unswitched(struct FunctionParams_t *params) {
@@ -847,8 +867,7 @@ NOINLINE static uint64_t mine_4u64_vector_unswitched(struct FunctionParams_t *pa
             sumX = libdivide_add_4u64(sumX, result);
         }
     }
-    const uint64_t *comps = (const uint64_t *)&sumX;
-    return comps[0] + comps[1] + comps[2] + comps[3];
+    return libdivide_sum_4u64(sumX);
 }
 #endif
 
@@ -941,9 +960,7 @@ NOINLINE static uint64_t mine_1s64_vector(struct FunctionParams_t *params) {
         libdivide_1s64_t result = libdivide_1s64_do_vector(numers, &denom);
         sumX = libdivide_add_1s64(sumX, result);
     }
-    const int64_t *comps = (const int64_t *)&sumX;
-    int64_t sum = comps[0];
-    return sum;
+    return libdivide_sum_1s64(sumX);
 }
 
 NOINLINE static uint64_t mine_1s64_vector_unswitched(struct FunctionParams_t *params) {
@@ -988,9 +1005,7 @@ NOINLINE static uint64_t mine_1s64_vector_unswitched(struct FunctionParams_t *pa
             sumX = libdivide_add_1s64(sumX, result);
         }
     }
-    const int64_t *comps = (const int64_t *)&sumX;
-    int64_t sum = comps[0];
-    return sum;
+    return libdivide_sum_1s64(sumX);
 }
 #endif
 
@@ -1006,9 +1021,7 @@ NOINLINE static uint64_t mine_2s64_vector(struct FunctionParams_t *params) {
         libdivide_2s64_t result = libdivide_2s64_do_vector(numers, &denom);
         sumX = libdivide_add_2s64(sumX, result);
     }
-    const int64_t *comps = (const int64_t *)&sumX;
-    int64_t sum = comps[0] + comps[1];
-    return sum;
+    return libdivide_sum_2s64(sumX);
 }
 
 NOINLINE static uint64_t mine_2s64_vector_unswitched(struct FunctionParams_t *params) {
@@ -1053,9 +1066,7 @@ NOINLINE static uint64_t mine_2s64_vector_unswitched(struct FunctionParams_t *pa
             sumX = libdivide_add_2s64(sumX, result);
         }
     }
-    const int64_t *comps = (const int64_t *)&sumX;
-    int64_t sum = comps[0] + comps[1];
-    return sum;
+    return libdivide_sum_2s64(sumX);
 }
 #endif
 
@@ -1071,9 +1082,7 @@ NOINLINE static uint64_t mine_4s64_vector(struct FunctionParams_t *params) {
         libdivide_4s64_t result = libdivide_4s64_do_vector(numers, &denom);
         sumX = libdivide_add_4s64(sumX, result);
     }
-    const int64_t *comps = (const int64_t *)&sumX;
-    int64_t sum = comps[0] + comps[1] + comps[2] + comps[3];
-    return sum;
+    return libdivide_sum_4s64(sumX);
 }
 
 NOINLINE static uint64_t mine_4s64_vector_unswitched(struct FunctionParams_t *params) {
@@ -1118,9 +1127,7 @@ NOINLINE static uint64_t mine_4s64_vector_unswitched(struct FunctionParams_t *pa
             sumX = libdivide_add_4s64(sumX, result);
         }
     }
-    const int64_t *comps = (const int64_t *)&sumX;
-    int64_t sum = comps[0] + comps[1] + comps[2] + comps[3];
-    return sum;
+    return libdivide_sum_4s64(sumX);
 }
 #endif
 
