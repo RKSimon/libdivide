@@ -133,8 +133,6 @@ struct libdivide_s64_t {
     uint8_t more;
 };
 
-
-
 #ifndef LIBDIVIDE_API
     #ifdef __cplusplus
         /* In C++, we don't want our public functions to be static, because they are arguments to templates and static functions can't do that.  They get internal linkage through virtue of the anonymous namespace.  In C, they should be static. */
@@ -143,7 +141,6 @@ struct libdivide_s64_t {
         #define LIBDIVIDE_API static
     #endif
 #endif
-
 
 LIBDIVIDE_API struct libdivide_s32_t libdivide_s32_gen(int32_t y);
 LIBDIVIDE_API struct libdivide_u32_t libdivide_u32_gen(uint32_t y);
@@ -180,6 +177,11 @@ LIBDIVIDE_API int64_t libdivide_s64_do_alg3(int64_t numer, const struct libdivid
 LIBDIVIDE_API int64_t libdivide_s64_do_alg4(int64_t numer, const struct libdivide_s64_t *denom);
 
 #if LIBDIVIDE_USE_SSE2
+typedef __m128i libdivide_4s32_t;
+typedef __m128i libdivide_2s64_t;
+typedef __m128i libdivide_4u32_t;
+typedef __m128i libdivide_2u64_t;
+
 LIBDIVIDE_API __m128i libdivide_4u32_do_vector(__m128i numers, const struct libdivide_u32_t * denom);
 LIBDIVIDE_API __m128i libdivide_4s32_do_vector(__m128i numers, const struct libdivide_s32_t * denom);
 LIBDIVIDE_API __m128i libdivide_2u64_do_vector(__m128i numers, const struct libdivide_u64_t * denom);
@@ -205,6 +207,20 @@ LIBDIVIDE_API __m128i libdivide_2s64_do_vector_alg2(__m128i numers, const struct
 LIBDIVIDE_API __m128i libdivide_2s64_do_vector_alg3(__m128i numers, const struct libdivide_s64_t * denom);
 LIBDIVIDE_API __m128i libdivide_2s64_do_vector_alg4(__m128i numers, const struct libdivide_s64_t * denom);
 #elif LIBDIVIDE_USE_NEON
+typedef int32x2_t   libdivide_2s32_t;
+typedef int32x4_t   libdivide_4s32_t;
+typedef int32x4x2_t libdivide_8s32_t;
+typedef int64x1_t   libdivide_1s64_t;
+typedef int64x2_t   libdivide_2s64_t;
+typedef int64x2x2_t libdivide_4s64_t;
+
+typedef uint32x2_t   libdivide_2u32_t;
+typedef uint32x4_t   libdivide_4u32_t;
+typedef uint32x4x2_t libdivide_8u32_t;
+typedef uint64x1_t   libdivide_1u64_t;
+typedef uint64x2_t   libdivide_2u64_t;
+typedef uint64x2x2_t libdivide_4u64_t;
+
 LIBDIVIDE_API    int32x2_t libdivide_2s32_do_vector(   int32x2_t numers, const struct libdivide_s32_t * denom);
 LIBDIVIDE_API    int32x4_t libdivide_4s32_do_vector(   int32x4_t numers, const struct libdivide_s32_t * denom);
 LIBDIVIDE_API  int32x4x2_t libdivide_8s32_do_vector( int32x4x2_t numers, const struct libdivide_s32_t * denom);
