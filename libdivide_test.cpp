@@ -193,17 +193,25 @@ private:
     void test_many(T denom) {
         const divider<T> the_divider = divider<T>(denom);
         size_t j;
-        for (j=0; j < 100000 / 4; j++) {
-            T numers[4] = {(T)this->next_random(), (T)this->next_random(), (T)this->next_random(), (T)this->next_random()};
+        for (j=0; j < 100000 / 8; j++) {
+            T numers[8] = {(T)this->next_random(), (T)this->next_random(), (T)this->next_random(), (T)this->next_random(), (T)this->next_random(), (T)this->next_random(), (T)this->next_random(), (T)this->next_random()};
             test_one(numers[0], denom, the_divider);
             test_one(numers[1], denom, the_divider);
             test_one(numers[2], denom, the_divider);
             test_one(numers[3], denom, the_divider);
+            test_one(numers[4], denom, the_divider);
+            test_one(numers[5], denom, the_divider);
+            test_one(numers[6], denom, the_divider);
+            test_one(numers[7], denom, the_divider);
 #if defined(LIBDIVIDE_VEC64)
-            test_vec64(numers, denom, the_divider);
+            test_vec64(numers+0, denom, the_divider);
+            test_vec64(numers+2, denom, the_divider);
+            test_vec64(numers+4, denom, the_divider);
+            test_vec64(numers+6, denom, the_divider);
 #endif
 #if defined(LIBDIVIDE_VEC128)
-            test_vec128(numers, denom, the_divider);
+            test_vec128(numers+0, denom, the_divider);
+            test_vec128(numers+4, denom, the_divider);
 #endif
 #if defined(LIBDIVIDE_VEC256)
             test_vec256(numers, denom, the_divider);
