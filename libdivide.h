@@ -1063,45 +1063,24 @@ uint32x4x2_t libdivide_8u32_do_vector_alg2(uint32x4x2_t numers, const struct lib
 }
 #elif LIBDIVIDE_USE_VECTOR
 libdivide_2u32_t libdivide_2u32_do_vector(libdivide_2u32_t numers, const struct libdivide_u32_t *denom) {
-    uint8_t more = denom->more;
-    if (more & LIBDIVIDE_U32_SHIFT_PATH) {
-        return libdivide_2u32_do_vector_alg0(numers, denom);
-    }
-    else {
-        if (more & LIBDIVIDE_ADD_MARKER) {
-            return libdivide_2u32_do_vector_alg2(numers, denom);
-        }
-        else {
-            return libdivide_2u32_do_vector_alg1(numers, denom);
-        }
+    switch (libdivide_u32_get_algorithm(denom)) {
+    case 0:  return libdivide_2u32_do_vector_alg0(numers, denom);
+    case 1:  return libdivide_2u32_do_vector_alg1(numers, denom);
+    default: return libdivide_2u32_do_vector_alg2(numers, denom);
     }
 }
 libdivide_4u32_t libdivide_4u32_do_vector(libdivide_4u32_t numers, const struct libdivide_u32_t *denom) {
-    uint8_t more = denom->more;
-    if (more & LIBDIVIDE_U32_SHIFT_PATH) {
-        return libdivide_4u32_do_vector_alg0(numers, denom);
-    }
-    else {
-        if (more & LIBDIVIDE_ADD_MARKER) {
-            return libdivide_4u32_do_vector_alg2(numers, denom);
-        }
-        else {
-            return libdivide_4u32_do_vector_alg1(numers, denom);
-        }
+    switch (libdivide_u32_get_algorithm(denom)) {
+    case 0:  return libdivide_4u32_do_vector_alg0(numers, denom);
+    case 1:  return libdivide_4u32_do_vector_alg1(numers, denom);
+    default: return libdivide_4u32_do_vector_alg2(numers, denom);
     }
 }
 libdivide_8u32_t libdivide_8u32_do_vector(libdivide_8u32_t numers, const struct libdivide_u32_t *denom) {
-    uint8_t more = denom->more;
-    if (more & LIBDIVIDE_U32_SHIFT_PATH) {
-        return libdivide_8u32_do_vector_alg0(numers, denom);
-    }
-    else {
-        if (more & LIBDIVIDE_ADD_MARKER) {
-            return libdivide_8u32_do_vector_alg2(numers, denom);
-        }
-        else {
-            return libdivide_8u32_do_vector_alg1(numers, denom);
-        }
+    switch (libdivide_u32_get_algorithm(denom)) {
+    case 0:  return libdivide_8u32_do_vector_alg0(numers, denom);
+    case 1:  return libdivide_8u32_do_vector_alg1(numers, denom);
+    default: return libdivide_8u32_do_vector_alg2(numers, denom);
     }
 }
 
@@ -1399,45 +1378,24 @@ uint64x2x2_t libdivide_4u64_do_vector_alg2(uint64x2x2_t numers, const struct lib
 }
 #elif LIBDIVIDE_USE_VECTOR
 libdivide_1u64_t libdivide_1u64_do_vector(libdivide_1u64_t numers, const struct libdivide_u64_t *denom) {
-    uint8_t more = denom->more;
-    if (more & LIBDIVIDE_U32_SHIFT_PATH) {
-        return libdivide_1u64_do_vector_alg0(numers, denom);
-    }
-    else {
-        if (more & LIBDIVIDE_ADD_MARKER) {
-            return libdivide_1u64_do_vector_alg2(numers, denom);
-        }
-        else {
-            return libdivide_1u64_do_vector_alg1(numers, denom);
-        }
+    switch (libdivide_u64_get_algorithm(denom)) {
+    case 0:  return libdivide_1u64_do_vector_alg0(numers, denom);
+    case 1:  return libdivide_1u64_do_vector_alg1(numers, denom);
+    default: return libdivide_1u64_do_vector_alg2(numers, denom);
     }
 }
 libdivide_2u64_t libdivide_2u64_do_vector(libdivide_2u64_t numers, const struct libdivide_u64_t *denom) {
-    uint8_t more = denom->more;
-    if (more & LIBDIVIDE_U32_SHIFT_PATH) {
-        return libdivide_2u64_do_vector_alg0(numers, denom);
-    }
-    else {
-        if (more & LIBDIVIDE_ADD_MARKER) {
-            return libdivide_2u64_do_vector_alg2(numers, denom);
-        }
-        else {
-            return libdivide_2u64_do_vector_alg1(numers, denom);
-        }
+    switch (libdivide_u64_get_algorithm(denom)) {
+    case 0:  return libdivide_2u64_do_vector_alg0(numers, denom);
+    case 1:  return libdivide_2u64_do_vector_alg1(numers, denom);
+    default: return libdivide_2u64_do_vector_alg2(numers, denom);
     }
 }
 libdivide_4u64_t libdivide_4u64_do_vector(libdivide_4u64_t numers, const struct libdivide_u64_t *denom) {
-    uint8_t more = denom->more;
-    if (more & LIBDIVIDE_U32_SHIFT_PATH) {
-        return libdivide_4u64_do_vector_alg0(numers, denom);
-    }
-    else {
-        if (more & LIBDIVIDE_ADD_MARKER) {
-            return libdivide_4u64_do_vector_alg2(numers, denom);
-        }
-        else {
-            return libdivide_4u64_do_vector_alg1(numers, denom);
-        }
+    switch (libdivide_u64_get_algorithm(denom)) {
+    case 0:  return libdivide_4u64_do_vector_alg0(numers, denom);
+    case 1:  return libdivide_4u64_do_vector_alg1(numers, denom);
+    default: return libdivide_4u64_do_vector_alg2(numers, denom);
     }
 }
 
