@@ -2378,7 +2378,7 @@ libdivide_1s64_t libdivide_1s64_do_vector_alg1(libdivide_1s64_t numers, const st
     uint8_t s = denom->more & LIBDIVIDE_64_SHIFT_MASK;
     int64_t roundToZeroTweak = (1ull << s) - 1;
     libdivide_1s64_t q = numers + ((numers >> (libdivide_1s64_t) { 63 }) & (libdivide_1s64_t) { roundToZeroTweak });
-    return -(q >> (libdivide_1u64_t) {  });
+    return -(q >> (libdivide_1u64_t) { s });
 }
 libdivide_2s64_t libdivide_2s64_do_vector_alg1(libdivide_2s64_t numers, const struct libdivide_s64_t *denom) {
     uint8_t s = denom->more & LIBDIVIDE_64_SHIFT_MASK;
