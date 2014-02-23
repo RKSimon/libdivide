@@ -126,10 +126,10 @@ uint64_t libdivide_sum_2u64(__m128i x) {
 #define libdivide_zero_4u32()           vdupq_n_u32(0)
 #define libdivide_zero_2s64()           vdupq_n_s64(0)
 #define libdivide_zero_2u64()           vdupq_n_u64(0)
-#define libdivide_zero_8s32()           (libdivide_8s32_t) { vdupq_n_s32(0), vdupq_n_s32(0) }
-#define libdivide_zero_8u32()           (libdivide_8u32_t) { vdupq_n_u32(0), vdupq_n_u32(0) }
-#define libdivide_zero_4s64()           (libdivide_4s64_t) { vdupq_n_s64(0), vdupq_n_s64(0) }
-#define libdivide_zero_4u64()           (libdivide_4u64_t) { vdupq_n_u64(0), vdupq_n_u64(0) }
+#define libdivide_zero_8s32()           (libdivide_8s32_t) { { vdupq_n_s32(0), vdupq_n_s32(0) } }
+#define libdivide_zero_8u32()           (libdivide_8u32_t) { { vdupq_n_u32(0), vdupq_n_u32(0) } }
+#define libdivide_zero_4s64()           (libdivide_4s64_t) { { vdupq_n_s64(0), vdupq_n_s64(0) } }
+#define libdivide_zero_4u64()           (libdivide_4u64_t) { { vdupq_n_u64(0), vdupq_n_u64(0) } }
 
 #define libdivide_add_2s32(x, y)        vadd_s32(x, y)
 #define libdivide_add_2u32(x, y)        vadd_u32(x, y)
@@ -139,10 +139,10 @@ uint64_t libdivide_sum_2u64(__m128i x) {
 #define libdivide_add_4u32(x, y)        vaddq_u32(x, y)
 #define libdivide_add_2s64(x, y)        vaddq_s64(x, y)
 #define libdivide_add_2u64(x, y)        vaddq_u64(x, y)
-#define libdivide_add_8s32(x, y)        (libdivide_8s32_t) { vaddq_s32(x.val[0], y.val[0]), vaddq_s32(x.val[1], y.val[1]) }
-#define libdivide_add_8u32(x, y)        (libdivide_8u32_t) { vaddq_u32(x.val[0], y.val[0]), vaddq_u32(x.val[1], y.val[1]) }
-#define libdivide_add_4s64(x, y)        (libdivide_4s64_t) { vaddq_s64(x.val[0], y.val[0]), vaddq_s64(x.val[1], y.val[1]) }
-#define libdivide_add_4u64(x, y)        (libdivide_4u64_t) { vaddq_u64(x.val[0], y.val[0]), vaddq_u64(x.val[1], y.val[1]) }
+#define libdivide_add_8s32(x, y)        (libdivide_8s32_t) { { vaddq_s32(x.val[0], y.val[0]), vaddq_s32(x.val[1], y.val[1]) } }
+#define libdivide_add_8u32(x, y)        (libdivide_8u32_t) { { vaddq_u32(x.val[0], y.val[0]), vaddq_u32(x.val[1], y.val[1]) } }
+#define libdivide_add_4s64(x, y)        (libdivide_4s64_t) { { vaddq_s64(x.val[0], y.val[0]), vaddq_s64(x.val[1], y.val[1]) } }
+#define libdivide_add_4u64(x, y)        (libdivide_4u64_t) { { vaddq_u64(x.val[0], y.val[0]), vaddq_u64(x.val[1], y.val[1]) } }
 
 #define libdivide_sum_2s32(x)           vget_lane_s32(vpadd_s32(x,x), 0)
 #define libdivide_sum_2u32(x)           vget_lane_u32(vpadd_u32(x,x), 0)
