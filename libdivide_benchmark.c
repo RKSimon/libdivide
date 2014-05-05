@@ -102,20 +102,20 @@ struct time_result {
 #define libdivide_add_2u64(x, y)        _mm_add_epi64(x, y)
 
 int32_t libdivide_sum_4s32(__m128i x) {
-	const int32_t *comps = (const int32_t*)&x;
-	return comps[0] + comps[1] + comps[2] + comps[3];
+    const int32_t *comps = (const int32_t*)&x;
+    return comps[0] + comps[1] + comps[2] + comps[3];
 }
 uint32_t libdivide_sum_4u32(__m128i x) {
-	const uint32_t *comps = (const uint32_t*)&x;
-	return comps[0] + comps[1] + comps[2] + comps[3];
+    const uint32_t *comps = (const uint32_t*)&x;
+    return comps[0] + comps[1] + comps[2] + comps[3];
 }
 int64_t libdivide_sum_2s64(__m128i x) {
-	const int64_t *comps = (const int64_t*)&x;
-	return comps[0] + comps[1];
+    const int64_t *comps = (const int64_t*)&x;
+    return comps[0] + comps[1];
 }
 uint64_t libdivide_sum_2u64(__m128i x) {
-	const uint64_t *comps = (const uint64_t*)&x;
-	return comps[0] + comps[1];
+    const uint64_t *comps = (const uint64_t*)&x;
+    return comps[0] + comps[1];
 }
 #elif LIBDIVIDE_USE_NEON
 #define libdivide_zero_2s32()           vdup_n_s32(0)

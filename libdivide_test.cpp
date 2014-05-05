@@ -257,18 +257,18 @@ static void *perform_test(void *ptr) {
             puts("Starting int32_t");
             DivideTest<int32_t
 #if defined(LIBDIVIDE_VEC64)
-            , libdivide_2s32_t
+                , libdivide_2s32_t
 #endif
 #if defined(LIBDIVIDE_VEC128)
-            , libdivide_4s32_t
+                , libdivide_4s32_t
 #endif
 #if defined(LIBDIVIDE_VEC256)
-            , libdivide_8s32_t
+                , libdivide_8s32_t
 #endif
             > dt;
             dt.run();
         }
-            break;
+        break;
 
         case 1:
         {
@@ -287,7 +287,7 @@ static void *perform_test(void *ptr) {
             > dt;
             dt.run();
         }
-            break;
+        break;
 
         case 2:
         {
@@ -306,7 +306,7 @@ static void *perform_test(void *ptr) {
             > dt;
             dt.run();
         }
-            break;
+        break;
 
         case 3:
         {
@@ -325,7 +325,7 @@ static void *perform_test(void *ptr) {
             > dt;
             dt.run();
         }
-            break;
+        break;
     }
     return 0;
 }
